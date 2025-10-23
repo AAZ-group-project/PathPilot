@@ -43,7 +43,7 @@ html, body {
     font-family: 'PathPilotFont', sans-serif;
     display: inline-block;
     letter-spacing: 2px;
-    transition: all 0.1s ease;
+    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
 
 .logo:hover {
@@ -60,7 +60,7 @@ html, body {
     color: white;
     transition: all 0.1s ease;
     padding: 10px;
-    border: 1px solid #008b8b;
+    border: 1.5px solid #008b8b;
     border-radius: 30px;
     padding: 8px 20px;
 }
