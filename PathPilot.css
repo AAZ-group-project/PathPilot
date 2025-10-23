@@ -37,20 +37,13 @@ html, body {
 /* Styling for logo */
 .logo {
     font-size: 2.5rem;
-    color: white;
+    color: #008b8b;
     text-decoration: none;
     padding: 4px 8px;
     font-family: 'PathPilotFont', sans-serif;
     display: inline-block;
     letter-spacing: 2px;
-    transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
 }
-
-.logo:hover {
-    border-radius: 5px;
-    color: #008b8b;
-}
-
 
 /* Styling for sign in */
 .signin{
@@ -63,6 +56,7 @@ html, body {
     border: 1.5px solid #008b8b;
     border-radius: 30px;
     padding: 8px 20px;
+    transition: all 0.1s ease;
 }
 
 .signin:hover {
