@@ -1,3 +1,11 @@
+/* Import font style */
+@font-face {
+    font-family: 'PathPilotFont';
+    src: url('fonts/star-shield-2-font/StarShieldV2-9M52K.ttf');
+    font-weight: normal;
+    font-style: normal;
+}
+
 .nav{
     /* Navigation bar uses Flexbox - display: flex, makes nav a flex container*/
     display: flex;
@@ -6,11 +14,18 @@
     /* Spreads child elements out with space between */
     justify-content: space-between;
     /* Gives the navigation bar a dark background */
-    background-color: grey;
+    background-color: black;
     position: relative;
     padding: 20px 20px;
     z-index: 10;
+    background: linear-gradient(180deg, #02030a, #050a1c);
+    border-bottom: 2px solid #161e3e;
+}
 
+body{
+    background-color: #02030a;
+    font-family: sans-serif;
+    color: #ffffff;
 }
 
 /* Make UI fill entire page */
@@ -21,12 +36,36 @@ html, body {
 
 /* Styling for logo */
 .logo {
-    font-size: 2rem;
-    color: #000000;
-    background-color: darkblue;
+    font-size: 2.5rem;
+    color: white;
     text-decoration: none;
     padding: 4px 8px;
-    border-radius: 8px;
+    font-family: 'PathPilotFont', sans-serif;
     display: inline-block;
+    letter-spacing: 2px;
     transition: all 0.1s ease;
+}
+
+.logo:hover {
+    border-radius: 5px;
+    color: #008b8b;
+}
+
+
+/* Styling for sign in */
+.signin{
+    text-decoration: none;
+    font-size: 1.4rem;
+    font-family: 'PathPilotFont', sans-serif;
+    color: white;
+    transition: all 0.1s ease;
+    padding: 10px;
+    border: 1px solid #008b8b;
+    border-radius: 30px;
+    padding: 8px 20px;
+}
+
+.signin:hover {
+    background: #008b8b;
+    color: black;
 }
