@@ -1,6 +1,6 @@
 # PathPilot
 ## Overview
-A route optimization system designed to improve delivery efficiency using smart path planning. It analyzes delivery locations, calculates the most efficient routes, and minimizes travel time and distance. By incorporating geographic data and dynamic routing strategies, PathPilot helps delivery teams reduce fuel costs, improve delivery times, and manage multiple delivery vehicles more effectively. Ideal for logistics operations and courier services. It will also provides a scalable foundation for real-time route adjustments, traffic-aware navigation, and priority-based scheduling in future iterations.
+PathPilot would provide a platform for analysing delivery locations, calculating the most efficient routes, and minimising travel time and distance. By incorporating geographic data and dynamic routing strategies, PathPilot helps delivery teams reduce fuel costs, improve delivery times, and manage multiple delivery vehicles more effectively. Ideal for logistics operations and courier services. It will also provides a scalable foundation for real-time route adjustments, traffic-aware navigation, and priority-based scheduling in future iterations.
 
 ## Layout/Plan
 ### Basic functionaility 
