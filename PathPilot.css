@@ -63,3 +63,30 @@ html, body {
     background: #008b8b;
     color: black;
 }
+
+.form-group{
+    text-decoration: none;
+    margin: 10px;
+}
+
+#location, #destination{
+    margin-bottom: 20px;
+}
+
+.submit{
+    text-decoration: none;
+    font-size: 1rem;
+    font-family: 'PathPilotFont', sans-serif;
+    color: white;
+    transition: all 0.1s ease;
+    padding: 10px;
+    border: 1.5px solid #008b8b;
+    border-radius: 30px;
+    padding: 8px 20px;
+    transition: all 0.1s ease;
+}
+
+.submit:hover {
+    background: #008b8b;
+    color: black;
+}
