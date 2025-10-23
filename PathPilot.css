@@ -42,7 +42,8 @@ html, body {
     padding: 4px 8px;
     font-family: 'PathPilotFont', sans-serif;
     display: inline-block;
-    letter-spacing: 2px;
+    letter-spacing: 1.5px;
+    font-weight: bold;
 }
 
 /* Styling for sign in */
@@ -65,28 +66,64 @@ html, body {
 }
 
 .form-group{
-    text-decoration: none;
     margin: 10px;
 }
 
-#location, #destination{
-    margin-bottom: 20px;
+#prompt{
+    display: flex;
+    flex-direction: column;
+    width: 300px;
+    text-decoration: none;
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
 }
 
-.submit{
-    text-decoration: none;
-    font-size: 1rem;
-    font-family: 'PathPilotFont', sans-serif;
-    color: white;
-    transition: all 0.1s ease;
-    padding: 10px;
+.submit {
+    display: inline-block;
+    background: transparent;
     border: 1.5px solid #008b8b;
     border-radius: 30px;
-    padding: 8px 20px;
-    transition: all 0.1s ease;
+    color: white;
+    font-size: 1rem;
+    font-family: 'PathPilotFont', sans-serif;
+    padding: 13px;
+    margin-top: 5px;
+    cursor: pointer;
+    text-align: center;
 }
 
 .submit:hover {
     background: #008b8b;
     color: black;
 }
+
+#heading{
+    font-size: 2.5rem;
+    color: #008b8b;
+    text-decoration: none;
+    padding: 4px 8px;
+    font-family: 'PathPilotFont', sans-serif;
+    display: block;
+    text-align: center;
+    letter-spacing: 1.5px;
+}
+
+.box {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 300px;
+    margin: 0 auto;
+    margin-top: 20px;
+    background-color: #050a1c;
+    border-radius: 10px;
+    padding: 20px;
+}
+
+.input-field{
+    padding: 10px;
+    border-radius: 5px;
+    border: none;
+}
+
