@@ -1,0 +1,32 @@
+.nav{
+    /* Navigation bar uses Flexbox - display: flex, makes nav a flex container*/
+    display: flex;
+    /* Vertically centers children */
+    align-items: center;
+    /* Spreads child elements out with space between */
+    justify-content: space-between;
+    /* Gives the navigation bar a dark background */
+    background-color: grey;
+    position: relative;
+    padding: 20px 20px;
+    z-index: 10;
+
+}
+
+/* Make UI fill entire page */
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+/* Styling for logo */
+.logo {
+    font-size: 2rem;
+    color: #000000;
+    background-color: darkblue;
+    text-decoration: none;
+    padding: 4px 8px;
+    border-radius: 8px;
+    display: inline-block;
+    transition: all 0.1s ease;
+}
