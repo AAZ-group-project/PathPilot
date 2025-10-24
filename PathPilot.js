@@ -23,18 +23,12 @@ async function getCoordinates(place){
     };
 }
 
-function resetMap(){
-    if (map){
-        map.remove();
-        map = null;
-    }
-    map2.style.display = 'none';
-}
+
 
 function mainPage(){
+    map2.style.display = 'block';
     panel.innerHTML = '';
-    resetMap();
-    
+
     const form = document.createElement("form");
     form.className = "entries";
 
@@ -104,7 +98,8 @@ function mainPage(){
 
 // UI for sign in menu
 function signInMenu(){
-    main.innerHTML='';
+    panel.innerHTML = '';
+    map2.style.display = 'none';
     
     const heading = document.createElement('h2');
     heading.innerText = "Sign In";
@@ -131,12 +126,13 @@ function signInMenu(){
     signBox.appendChild(emailPrompt);
     signBox.appendChild(passwordPrompt);
     signBox.appendChild(submitButton);
-    main.appendChild(signBox);
+    panel.appendChild(signBox);
 }
 
 // register function //
 function Register() {
-    main.innerHTML='';
+    panel.innerHTML = '';
+    map2.style.display = 'none';
 
     const heading = document.createElement('h2');
     heading.innerText = "Register";
@@ -182,24 +178,25 @@ function Register() {
     signBox.appendChild(confirmPasswordPrompt);
     signBox.appendChild(submitButton);
 
-    main.appendChild(signBox);
+    panel.appendChild(signBox);
 }
 
-function Dashboard(){
-    mainPage();
-}
+
 register.addEventListener("click", function(e) {
     e.preventDefault();
+    section.classList.add("auth-mode");
     Register();
 });
 
 signIn.addEventListener("click", (e) => {
     e.preventDefault();
+    section.classList.add("auth-mode");
     signInMenu();
 });
 
 dashboardBtn.addEventListener("click", (e) => {
     e.preventDefault();
+    section.classList.remove("auth-mode");
     mainPage();
 });
 

@@ -21,6 +21,11 @@
     margin-top: 20px;
     gap: 0px;
 }
+
+.auth-mode {
+    justify-content: center !important;
+}
+
 #map {
     flex: 1;
     height: 500px;
