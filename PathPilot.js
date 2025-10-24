@@ -10,12 +10,14 @@ async function getCoordinates(place) {
     const response = await fetch(url);
     const data = await response.json();
     if (!data.length) {
-const section = document.getElementById('section');
-const panel = document.getElementById('panel');
-const map2 = document.getElementById('map');
-const dashboardBtn = document.getElementsByClassName("dashboard")[0]; // or use getElementById if you have an id
-let map = null;
-let layerGroup = null;
+        const section = document.getElementById('section');
+        const panel = document.getElementById('panel');
+        const map2 = document.getElementById('map');
+        const dashboardBtn = document.getElementsByClassName("dashboard")[0]; // or use getElementById if you have an id
+        let map = null;
+        let layerGroup = null;
+    }
+}
 
 mainPage();
 
@@ -266,7 +268,7 @@ function Register() {
 register.addEventListener("click", function(e) {
     e.preventDefault();
     panel.appendChild(signBox);
-}
+});
 
 
 register.addEventListener("click", function(e) {
