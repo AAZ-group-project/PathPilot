@@ -1,3 +1,4 @@
+
 * {
   margin: 0;
   padding: 0;
@@ -13,6 +14,23 @@
 }
 
 #section {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+    height: calc(100vh - 80px);
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.entries{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 300px;
+
+    background-color: #050a1c;
+    border-radius: 10px 0 0 10px;
+    height: 70%;
     display: flex;
     justify-content: flex-end;
     align-items: flex-start;
@@ -222,6 +240,14 @@ html, body {
     display: block;
 }
 
+.flash-message {
+  background: #e6ffea;
+  color: #064e2d;
+  padding: 10px;
+  border-radius: 6px;
+  text-align: center;
+  font-weight: 600;
+}
 .nav-links {
     display: flex;
     align-items: center;

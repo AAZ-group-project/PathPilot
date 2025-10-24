@@ -2,6 +2,14 @@ const main = document.getElementById("section");
 const signIn = document.getElementsByClassName("signin")[0];
 const logo = document.getElementsByClassName("logo")[0];
 const register = document.getElementsByClassName("register")[0];
+
+mainPage();
+
+async function getCoordinates(place) {
+    const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&countrycodes=gb&limit=1&q=${encodeURIComponent(place)}`;
+    const response = await fetch(url);
+    const data = await response.json();
+    if (!data.length) {
 const section = document.getElementById('section');
 const panel = document.getElementById('panel');
 const map2 = document.getElementById('map');
@@ -62,6 +70,21 @@ function mainPage(){
     submitMainButton.className = "submit";
     submitMainButton.type = "submit";
 
+    form.addEventListener("submit", async(e) => {
+        e.preventDefault();
+        const location = locationInput.value;
+        const destination = destinationInput.value;
+        const locationCoords = await getCoordinates(location);
+        const destinationCoords = await getCoordinates(destination);
+        if (!locationCoords || !destinationCoords) {
+            alert("One of the locations could not be found.");
+            return;
+        }
+        alert(
+            `Location: ${locationCoords.display_name}\nLat: ${locationCoords.lat}, Lon: ${locationCoords.lon}\n\nDestination: ${destinationCoords.display_name}\nLat: ${destinationCoords.lat}, Lon: ${destinationCoords.lon}`
+        );
+    });
+
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const startCoords = await getCoordinates(locationInput.value);
@@ -108,6 +131,16 @@ function signInMenu(){
     const signBox = document.createElement('div');
     signBox.setAttribute('class','box');
 
+    // show server flash message if present
+    if (window.flashMessage) {
+        const flashDiv = document.createElement('div');
+        flashDiv.className = 'flash-message';
+        flashDiv.innerText = window.flashMessage;
+        // optional: remove global so it doesn't persist if user navigates around
+        window.flashMessage = '';
+        signBox.appendChild(flashDiv);
+    }
+
     const emailPrompt = document.createElement('input');
     emailPrompt.type = "email";
     emailPrompt.placeholder = "Enter your email...";
@@ -131,6 +164,7 @@ function signInMenu(){
 
 // register function //
 function Register() {
+    main.innerHTML = '';
     panel.innerHTML = '';
     map2.style.display = 'none';
 
@@ -169,6 +203,54 @@ function Register() {
     const submitButton = document.createElement('button');
     submitButton.innerText = "Register";
     submitButton.className = "submit";
+    submitButton.type = "button";
+
+    // send data to backend when clicking Register
+    submitButton.addEventListener('click', async () => {
+        const payload = {
+            fname: fnamePrompt.value,
+            sname: snamePrompt.value,
+            email: emailPrompt.value,
+            password: passwordPrompt.value,
+            confirmPassword: confirmPasswordPrompt.value
+        };
+
+        try {
+            const resp = await fetch('/register', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload)
+            });
+            const data = await resp.json();
+
+
+            if (!resp.ok) {
+                const msgs = (data.errors || []).map(e => e.msg).join('\n');
+                // clear inputs after failure to register
+                fnamePrompt.value = '';
+                snamePrompt.value = '';
+                emailPrompt.value = '';
+                passwordPrompt.value = '';
+                confirmPasswordPrompt.value = '';
+                //This is where you can show the error messages to the user (can you make it so it displays on the actual website instead of an alert)
+                alert(msgs || 'Registration error'); //AAYYANN DO THISSSSS
+                console.log('Registration errors from server:', data.errors);
+                return;
+            }
+
+            // clears input fields upon successful registration
+            fnamePrompt.value = '';
+            snamePrompt.value = '';
+            emailPrompt.value = '';
+            passwordPrompt.value = '';
+            confirmPasswordPrompt.value = '';
+            console.log('Server response:', data);
+            alert('Registration sent');
+        } catch (err) {
+            console.error('Registration failed', err);
+            alert('Registration failed');
+        }
+    });
 
     signBox.appendChild(heading);
     signBox.appendChild(fnamePrompt);
@@ -178,6 +260,11 @@ function Register() {
     signBox.appendChild(confirmPasswordPrompt);
     signBox.appendChild(submitButton);
 
+    main.appendChild(signBox);
+}
+
+register.addEventListener("click", function(e) {
+    e.preventDefault();
     panel.appendChild(signBox);
 }
 
