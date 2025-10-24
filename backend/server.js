@@ -81,7 +81,7 @@ app.post("/register", async (req, res) => {
                             }
                             console.log(results.rows);
                             req.flash('success_msg', 'You are now registered. Please log in.');
-                            res.redirect('/signin');
+                            // res.redirect('/signin'); this will crash the server as there is no front-end route handling yet
                         }
                     )
                 }
