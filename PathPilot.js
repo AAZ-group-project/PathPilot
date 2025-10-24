@@ -1,6 +1,7 @@
 const main = document.getElementById("section");
 const signIn = document.getElementsByClassName("signin")[0];
 const logo = document.getElementsByClassName("logo")[0];
+const register = document.getElementsByClassName("register")[0];
 
 mainPage();
 
@@ -101,6 +102,62 @@ function signInMenu(){
     signBox.appendChild(submitButton);
     main.appendChild(signBox);
 }
+
+// register function //
+function Register() {
+    main.innerHTML = '';
+
+    const heading = document.createElement('h2');
+    heading.innerText = "Register";
+    heading.setAttribute('id', 'heading');
+
+    const signBox = document.createElement('div');
+    signBox.setAttribute('class', 'box');
+
+    const fnamePrompt = document.createElement('input');
+    fnamePrompt.type = "text";
+    fnamePrompt.placeholder = "Enter your First name...";
+    fnamePrompt.className = "input-field";
+
+    const snamePrompt = document.createElement('input');
+    snamePrompt.type = "text";
+    snamePrompt.placeholder = "Enter your Surname...";
+    snamePrompt.className = "input-field";
+
+    const emailPrompt = document.createElement('input');
+    emailPrompt.type = "email";
+    emailPrompt.placeholder = "Enter your email...";
+    emailPrompt.className = "input-field";
+
+    const passwordPrompt = document.createElement('input');
+    passwordPrompt.type = "password";
+    passwordPrompt.placeholder = "Enter your password...";
+    passwordPrompt.className = "input-field";
+
+    const confirmPasswordPrompt = document.createElement('input'); // added
+    confirmPasswordPrompt.type = "password";
+    confirmPasswordPrompt.placeholder = "Re-enter your password...";
+    confirmPasswordPrompt.className = "input-field";
+
+    const submitButton = document.createElement('button');
+    submitButton.innerText = "Register";
+    submitButton.className = "submit";
+
+    signBox.appendChild(heading);
+    signBox.appendChild(fnamePrompt);
+    signBox.appendChild(snamePrompt);
+    signBox.appendChild(emailPrompt);
+    signBox.appendChild(passwordPrompt);
+    signBox.appendChild(confirmPasswordPrompt);
+    signBox.appendChild(submitButton);
+
+    main.appendChild(signBox);
+}
+
+register.addEventListener("click", function(e) {
+    e.preventDefault();
+    Register();
+});
 
 signIn.addEventListener("click", (e) => {
     e.preventDefault();
