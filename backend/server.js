@@ -42,6 +42,7 @@ app.post("/register", async (req, res) => {
         let hashedPassword = await bcrypt.hash(password, 10);
         console.log(hashedPassword);
 
+        // Check if email already exists
         pool.query(
             `SELECT * FROM users 
             WHERE email = $1`,

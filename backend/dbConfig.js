@@ -7,6 +7,7 @@ const { Pool } = require("pg")
 //False if we are in development and true if we are in production
 const isProduction = process.env.NODE_ENV === "production";
 
+//Creates a new pool object to connect to the database
 const pool = isProduction
   ? new Pool({ connectionString: process.env.DATABASE_URL, ssl: { rejectUnauthorized: false } })
   : new Pool({
