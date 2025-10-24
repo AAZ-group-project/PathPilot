@@ -1,3 +1,4 @@
+
 * {
   margin: 0;
   padding: 0;
@@ -12,16 +13,59 @@
     font-style: normal;
 }
 
+#section {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+    height: calc(100vh - 80px);
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
 .entries{
     display: flex;
     flex-direction: column;
     gap: 15px;
     width: 300px;
-    margin: 0 auto;
-    margin-top: 20px;
+
     background-color: #050a1c;
+    border-radius: 10px 0 0 10px;
+    height: 70%;
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+    height: calc(100vh - 80px);
+    padding: 0px;
+    margin-top: 20px;
+    gap: 0px;
+}
+
+.auth-mode {
+    justify-content: center !important;
+}
+
+#map {
+    flex: 1;
+    height: 500px;
+    min-width: 300px;
+    border: 2px solid #008b8b;
     border-radius: 10px;
+    display: none;
+}
+#panel {
+    width: 300px;
+}
+
+.entries {
+    width: 100%;
+    background-color: #050a1c;
+    border-radius: 10px 0 0 10px;
+    height: 80vh;
     padding: 20px;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
 }
 
 .nav{
@@ -41,9 +85,44 @@
 }
 
 body{
+    margin: 0;
     background-color: #02030a;
     font-family: sans-serif;
     color: #ffffff;
+}
+
+.register{
+    text-decoration: none;
+    font-size: 1.4rem;
+    font-family: 'PathPilotFont', sans-serif;
+    color: white;
+    transition: all 0.1s ease;
+    padding: 10px;
+    border: 1.5px solid #008b8b;
+    border-radius: 30px;
+    padding: 8px 20px;
+    transition: all 0.1s ease;
+}
+.register:hover {
+    background: #008b8b;
+    color: black;
+}
+
+.dashboard{
+    text-decoration: none;
+    font-size: 1.4rem;
+    font-family: 'PathPilotFont', sans-serif;
+    color: white;
+    transition: all 0.1s ease;
+    padding: 10px;
+    border: 1.5px solid #008b8b;
+    border-radius: 30px;
+    padding: 8px 20px;
+    transition: all 0.1s ease;
+}
+.dashboard:hover {
+    background: #008b8b;
+    color: black;
 }
 
 /* Make UI fill entire page */
@@ -62,23 +141,14 @@ html, body {
     display: inline-block;
     letter-spacing: 1.5px;
     font-weight: bold;
+    transition: all 0.1s ease;
+}
+.logo:hover {
+    color: white;
 }
 
 /* Styling for sign in */
 .signin{
-    text-decoration: none;
-    font-size: 1.4rem;
-    font-family: 'PathPilotFont', sans-serif;
-    color: white;
-    transition: all 0.1s ease;
-    padding: 10px;
-    border: 1.5px solid #008b8b;
-    border-radius: 30px;
-    padding: 8px 20px;
-    transition: all 0.1s ease;
-}
-
-.register{
     text-decoration: none;
     font-size: 1.4rem;
     font-family: 'PathPilotFont', sans-serif;
@@ -96,11 +166,6 @@ html, body {
     color: black;
 }
 
-.register:hover {
-    background: #008b8b;
-    color: black;
-}
-
 .form-group{
     margin: 10px;
 }
@@ -110,11 +175,8 @@ html, body {
     flex-direction: column;
     width: 300px;
 
-    text-decoration: none;
     padding: 10px;
 
-    border-radius: 5px;
-    border: none;
 }
 
 .submit {
@@ -164,7 +226,6 @@ html, body {
     width: 100%;
     padding: 10px;
     border-radius: 6px;
-    border-radius: 5px;
     border: none;
     background-color: white;
     color: black;
@@ -172,6 +233,38 @@ html, body {
 }
 
 .prompt-label {
+    font-size: 25px;
+    color: #008b8b;
+    font-family: 'PathPilotFont', sans-serif;
     margin-bottom: 10px;
     display: block;
+}
+
+.flash-message {
+  background: #e6ffea;
+  color: #064e2d;
+  padding: 10px;
+  border-radius: 6px;
+  text-align: center;
+  font-weight: 600;
+}
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    position: relative;
+}
+.nav-links a {
+    position: relative;
+}
+.nav-links a + a::before {
+    content: "|";
+    position: absolute;
+    left: -18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #008b8b;
+    font-size: 1.6rem;
+    font-weight: bold;
+    pointer-events: none;
 }

@@ -6,52 +6,32 @@
         <title>PathPilot</title>
         <!-- Link styling sheet -->
         <link rel="stylesheet" href="PathPilot.css">
+        <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+            integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY="
+            crossorigin=""/>
+        <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+            integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo="
+            crossorigin=""></script>
     </head>
     <body>
         <!-- Encompass all navigation tools within a 'div' with class named 'nav' for css -->
         <div class="nav">
             <!-- Used href="#" so the users cursor turns to a click when hovering over the name of the movie site to return to the main page -->
             <a class="logo" href="#">PathPilot</a>
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PathPilot</title>
-    <!-- Link styling sheet -->
-    <link rel="stylesheet" href="PathPilot.css">
-</head>
-<body>
-    <!-- Navigation bar -->
-    <div class="nav">
-        <!-- Clicking the logo returns to main page -->
-        <a class="logo" href="#">PathPilot</a>
-
+            
             <a class="signin" href="#">Sign In</a>
+            <a class="register" href="#">Register</a>
+            <div class="nav-links">
+                <a class="signin" href="#">Sign In</a>
+                <a class="register" href="#">Register</a>
+                <a class="dashboard" href="#">Dashboard</a>
+            </div>
         </div>
         <section id="section">
-        <!-- Sign In & Register buttons -->
-        <a class="signin" href="#">Sign In</a>
-        <a class="register" href="#">Register</a>
-    </div>
-
-    <!-- Main section for forms -->
-    <section id="section">
-        <form class="entries">
-            <div class="form-group">
-                <label id="prompt-label">Location:</label><br>
-                <input type="search" id="prompt" name="location" placeholder="Enter location..." required><br>
-                
-                <label id="prompt-label">Destination:</label><br>
-                <input type="search" id="prompt" name="destination" placeholder="Enter destination..." required><br>
-                
-                <a class="submit" href="#">Submit</a>
-            </div>
-        </form>
-    </section>
-
+            <div id="map"></div>
+            <div id="panel"></div>
         </section>
     </body>
     <!-- Link JavaScript -->
     <script src="PathPilot.js"></script>
-</html>
-</body>
 </html>
