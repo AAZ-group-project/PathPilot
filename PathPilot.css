@@ -1,9 +1,36 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 /* Import font style */
 @font-face {
     font-family: 'PathPilotFont';
     src: url('fonts/star-shield-2-font/StarShieldV2-9M52K.ttf');
     font-weight: normal;
     font-style: normal;
+}
+
+#section {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+    height: calc(100vh - 80px);
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
+.entries{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 300px;
+
+    background-color: #050a1c;
+    border-radius: 10px 0 0 10px;
+    height: 70%;
+    padding: 20px;
 }
 
 .nav{
@@ -23,6 +50,7 @@
 }
 
 body{
+    margin: 0;
     background-color: #02030a;
     font-family: sans-serif;
     color: #ffffff;
@@ -73,13 +101,13 @@ html, body {
     display: flex;
     flex-direction: column;
     width: 300px;
-    text-decoration: none;
+
     padding: 10px;
-    border-radius: 5px;
-    border: none;
+
 }
 
 .submit {
+    width: 100%;  
     display: inline-block;
     background: transparent;
     border: 1.5px solid #008b8b;
@@ -121,9 +149,20 @@ html, body {
     padding: 20px;
 }
 
-.input-field{
+.input-field {
+    width: 100%;
     padding: 10px;
-    border-radius: 5px;
+    border-radius: 6px;
     border: none;
+    background-color: white;
+    color: black;
+    margin-bottom: 10px;
 }
 
+.prompt-label {
+    font-size: 25px;
+    color: #008b8b;
+    font-family: 'PathPilotFont', sans-serif;
+    margin-bottom: 10px;
+    display: block;
+}
