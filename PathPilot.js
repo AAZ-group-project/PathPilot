@@ -10,6 +10,20 @@ async function getCoordinates(place) {
     const response = await fetch(url);
     const data = await response.json();
     if (!data.length) {
+const section = document.getElementById('section');
+const panel = document.getElementById('panel');
+const map2 = document.getElementById('map');
+const dashboardBtn = document.getElementsByClassName("dashboard")[0]; // or use getElementById if you have an id
+let map = null;
+let layerGroup = null;
+
+mainPage();
+
+async function getCoordinates(place){
+    const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&countrycodes=gb&limit=1&q=${encodeURIComponent(place)}`;
+    const response = await fetch(url);
+    const data = await response.json();
+    if (!data.length){
         return null;
     }
     return {
@@ -17,8 +31,12 @@ async function getCoordinates(place) {
     };
 }
 
+
+
 function mainPage(){
-    main.innerHTML = '';
+    map2.style.display = 'block';
+    panel.innerHTML = '';
+
     const form = document.createElement("form");
     form.className = "entries";
 
@@ -67,14 +85,45 @@ function mainPage(){
         );
     });
 
+    form.addEventListener('submit', async (e) => {
+        e.preventDefault();
+        const startCoords = await getCoordinates(locationInput.value);
+        const endCoords = await getCoordinates(destinationInput.value);
+        if (!startCoords || !endCoords){
+            alert('One of the locations could not be found.');
+            return;
+        }
+        const mapContainer = document.getElementById('map');
+        mapContainer.style.display = 'block';
+        if (!map) {
+            map = L.map('map');
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+                maxZoom: 19,
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+            layerGroup = L.layerGroup().addTo(map);
+        }
+        setTimeout(() => map.invalidateSize(), 0);
+        layerGroup.clearLayers();
+        const m1 = L.marker([startCoords.lat, startCoords.lon]).bindPopup(`Start: ${startCoords.display_name}`).openPopup();
+        const m2 = L.marker([endCoords.lat, endCoords.lon]).bindPopup(`Destination: ${endCoords.display_name}`).openPopup();
+        layerGroup.addLayer(m1).addLayer(m2);
+        const bounds = L.latLngBounds(
+            [startCoords.lat, startCoords.lon],
+            [endCoords.lat, endCoords.lon]
+        );
+        map.fitBounds(bounds, {padding: [30, 30]});
+    });
     formGroup.append(locationLabel, locationInput, destinationLabel, destinationInput, submitMainButton);
     form.appendChild(formGroup);
-    main.appendChild(form);
+    panel.appendChild(form);
 }
 
 // UI for sign in menu
 function signInMenu(){
-    main.innerHTML = '';
+    panel.innerHTML = '';
+    map2.style.display = 'none';
+    
     const heading = document.createElement('h2');
     heading.innerText = "Sign In";
     heading.setAttribute('id', 'heading');
@@ -110,12 +159,14 @@ function signInMenu(){
     signBox.appendChild(emailPrompt);
     signBox.appendChild(passwordPrompt);
     signBox.appendChild(submitButton);
-    main.appendChild(signBox);
+    panel.appendChild(signBox);
 }
 
 // register function //
 function Register() {
     main.innerHTML = '';
+    panel.innerHTML = '';
+    map2.style.display = 'none';
 
     const heading = document.createElement('h2');
     heading.innerText = "Register";
@@ -214,16 +265,25 @@ function Register() {
 
 register.addEventListener("click", function(e) {
     e.preventDefault();
+    panel.appendChild(signBox);
+}
+
+
+register.addEventListener("click", function(e) {
+    e.preventDefault();
+    section.classList.add("auth-mode");
     Register();
 });
 
 signIn.addEventListener("click", (e) => {
     e.preventDefault();
+    section.classList.add("auth-mode");
     signInMenu();
 });
 
-logo.addEventListener("click", (e) => {
+dashboardBtn.addEventListener("click", (e) => {
     e.preventDefault();
+    section.classList.remove("auth-mode");
     mainPage();
 });
 
