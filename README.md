@@ -4,17 +4,21 @@ PathPilot would provide a platform for analysing delivery locations, calculating
 
 ## Layout/Plan
 ### Basic functionaility 
+1. Allow users to login
+    - Users create login credentials which are stored in a datebase
+    - Users can then log in upon usage of the website at another time
 1. Allow users to input locations 
-    - User enters delivery stops with addresses
+    - User enters multiple delivery stops with addresses
+    - Input start and end locations
 2. Geocoding
     - Convert addresses to lat/long
 3. Single Route Optimization
-    - Optimize route using nearest-neighbor algorithm
+    - Optimize route for fastest time 
 4. Routing Map Display
     - Show optimized route on interactive map
 
 ### Improvements/Further functionality
 1. Live Traffic Data
-    - Use Google Maps or Here Maps API
+    - Use OpenStreetMap API
 2. Priority Orders
     - Route high-priority stops first
