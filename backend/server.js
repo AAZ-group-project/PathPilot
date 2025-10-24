@@ -1,8 +1,10 @@
 const express = require('express');
 const app = express();
+const { pool } = require("./dbConfig");
 const path = require('path'); // Add this to handle file paths
 const fs = require('fs');     // Add this to handle file operations
 const cors = require('cors');
+const bcrypt = require('bcrypt');
 
 const PORT = process.env.PORT || 4000;
 
@@ -37,7 +39,26 @@ app.post("/register", async (req, res) => {
     } else{
         // Form validation succeeded
 
-        let hashedPassword;
+        let hashedPassword = await bcrypt.hash(password, 10);
+        console.log(hashedPassword);
+
+        pool.query(
+            `SELECT * FROM users 
+            WHERE email = $1`,
+            [email],
+            (err, results) => {
+                if (err) {
+                    throw err;
+                }
+
+                console.log(results.rows);
+
+                if (results.rows.length > 0) {
+                    errors.push({ msg: 'Email already registered' });
+                    return res.status(400).json({ errors });
+                }
+            }
+        )
     }
 
     // valid — log registration and respond

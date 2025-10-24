@@ -166,18 +166,18 @@ function Register() {
 
             if (!resp.ok) {
                 const msgs = (data.errors || []).map(e => e.msg).join('\n');
-                // clear inputs
+                // clear inputs after failure to register
                 fnamePrompt.value = '';
                 snamePrompt.value = '';
                 emailPrompt.value = '';
                 passwordPrompt.value = '';
                 confirmPasswordPrompt.value = '';
-                alert(msgs || 'Registration error');
+                alert(msgs || 'Registration error'); //AAYYANN DO THISSSSS
                 console.log('Registration errors from server:', data.errors);
                 return;
             }
 
-            // success — clear inputs and notify
+            // clears input fields upon successful registration
             fnamePrompt.value = '';
             snamePrompt.value = '';
             emailPrompt.value = '';
