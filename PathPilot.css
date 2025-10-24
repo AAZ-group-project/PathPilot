@@ -1,9 +1,27 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
 /* Import font style */
 @font-face {
     font-family: 'PathPilotFont';
     src: url('fonts/star-shield-2-font/StarShieldV2-9M52K.ttf');
     font-weight: normal;
     font-style: normal;
+}
+
+.entries{
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    width: 300px;
+    margin: 0 auto;
+    margin-top: 20px;
+    background-color: #050a1c;
+    border-radius: 10px;
+    padding: 20px;
 }
 
 .nav{
@@ -60,7 +78,25 @@ html, body {
     transition: all 0.1s ease;
 }
 
+.register{
+    text-decoration: none;
+    font-size: 1.4rem;
+    font-family: 'PathPilotFont', sans-serif;
+    color: white;
+    transition: all 0.1s ease;
+    padding: 10px;
+    border: 1.5px solid #008b8b;
+    border-radius: 30px;
+    padding: 8px 20px;
+    transition: all 0.1s ease;
+}
+
 .signin:hover {
+    background: #008b8b;
+    color: black;
+}
+
+.register:hover {
     background: #008b8b;
     color: black;
 }
@@ -73,13 +109,16 @@ html, body {
     display: flex;
     flex-direction: column;
     width: 300px;
+
     text-decoration: none;
     padding: 10px;
+
     border-radius: 5px;
     border: none;
 }
 
 .submit {
+    width: 100%;  
     display: inline-block;
     background: transparent;
     border: 1.5px solid #008b8b;
@@ -121,9 +160,19 @@ html, body {
     padding: 20px;
 }
 
+.input-field {
+    width: 100%;
 .input-field{
     padding: 10px;
+    border-radius: 6px;
     border-radius: 5px;
     border: none;
+    background-color: white;
+    color: black;
+    margin-bottom: 10px;
 }
 
+.prompt-label {
+    margin-bottom: 10px;
+    display: block;
+}

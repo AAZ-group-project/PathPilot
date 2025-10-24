@@ -12,21 +12,46 @@
         <div class="nav">
             <!-- Used href="#" so the users cursor turns to a click when hovering over the name of the movie site to return to the main page -->
             <a class="logo" href="#">PathPilot</a>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PathPilot</title>
+    <!-- Link styling sheet -->
+    <link rel="stylesheet" href="PathPilot.css">
+</head>
+<body>
+    <!-- Navigation bar -->
+    <div class="nav">
+        <!-- Clicking the logo returns to main page -->
+        <a class="logo" href="#">PathPilot</a>
 
             <a class="signin" href="#">Sign In</a>
         </div>
         <section id="section">
-            <form class="entries">
-                <div class="form-group">
-                    <label id="prompt-label">Location:</label><br>
-                    <input type="search" id="prompt" name="location" placeholder="Enter location..." required><br>
-                    <label id="prompt-label">Destination:</label><br>
-                    <input type="search" id="prompt" name="destination" placeholder="Enter destination..." required><br>
-                    <a class="submit" href="#">Submit</a>
-                </div>
-            </form>
+        <!-- Sign In & Register buttons -->
+        <a class="signin" href="#">Sign In</a>
+        <a class="register" href="#">Register</a>
+    </div>
+
+    <!-- Main section for forms -->
+    <section id="section">
+        <form class="entries">
+            <div class="form-group">
+                <label id="prompt-label">Location:</label><br>
+                <input type="search" id="prompt" name="location" placeholder="Enter location..." required><br>
+                
+                <label id="prompt-label">Destination:</label><br>
+                <input type="search" id="prompt" name="destination" placeholder="Enter destination..." required><br>
+                
+                <a class="submit" href="#">Submit</a>
+            </div>
+        </form>
+    </section>
+
         </section>
     </body>
     <!-- Link JavaScript -->
     <script src="PathPilot.js"></script>
+</html>
+</body>
 </html>
