@@ -154,6 +154,9 @@ function Register() {
     main.appendChild(signBox);
 }
 
+function Dashboard(){
+    mainPage()
+}
 register.addEventListener("click", function(e) {
     e.preventDefault();
     Register();
@@ -167,4 +170,10 @@ signIn.addEventListener("click", (e) => {
 logo.addEventListener("click", (e) => {
     e.preventDefault();
     mainPage();
+});
+
+const dashboardBtn = document.getElementsByClassName("dashboard")[0]; // or use getElementById if you have an id
+dashboardBtn.addEventListener("click", (e) => {
+    e.preventDefault();
+    Dashboard();
 });
