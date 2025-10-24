@@ -19,6 +19,17 @@
     height: calc(100vh - 80px);
     margin: 0;                 
 }
+#map {
+  flex: 1;
+  height: 500px;
+  min-width: 300px;
+  border: 2px solid #008b8b;
+  border-radius: 10px;
+  display: none;
+}
+#panel {
+  width: 300px;
+}
 
 .entries {
     display: flex;
@@ -27,6 +38,8 @@
     width: 300px;          
     max-width: 90%;         
     background-color: #050a1c;
+    border-radius: 10px 0 0 10px;
+    height: 80vh;
     border-radius: 10px;
     padding: 20px;
     box-shadow: 0 0 10px rgba(0,0,0,0.5); 
