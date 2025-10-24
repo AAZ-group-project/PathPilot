@@ -184,3 +184,12 @@ html, body {
     margin-bottom: 10px;
     display: block;
 }
+
+.flash-message {
+  background: #e6ffea;
+  color: #064e2d;
+  padding: 10px;
+  border-radius: 6px;
+  text-align: center;
+  font-weight: 600;
+}

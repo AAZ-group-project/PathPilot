@@ -82,6 +82,16 @@ function signInMenu(){
     const signBox = document.createElement('div');
     signBox.setAttribute('class','box');
 
+    // show server flash message if present
+    if (window.flashMessage) {
+        const flashDiv = document.createElement('div');
+        flashDiv.className = 'flash-message';
+        flashDiv.innerText = window.flashMessage;
+        // optional: remove global so it doesn't persist if user navigates around
+        window.flashMessage = '';
+        signBox.appendChild(flashDiv);
+    }
+
     const emailPrompt = document.createElement('input');
     emailPrompt.type = "email";
     emailPrompt.placeholder = "Enter your email...";
@@ -139,11 +149,10 @@ function Register() {
     confirmPasswordPrompt.placeholder = "Re-enter your password...";
     confirmPasswordPrompt.className = "input-field";
 
-// ...existing code...
     const submitButton = document.createElement('button');
     submitButton.innerText = "Register";
     submitButton.className = "submit";
-    submitButton.type = "button"; // use button to prevent implicit form behavior
+    submitButton.type = "button";
 
     // send data to backend when clicking Register
     submitButton.addEventListener('click', async () => {
@@ -172,6 +181,7 @@ function Register() {
                 emailPrompt.value = '';
                 passwordPrompt.value = '';
                 confirmPasswordPrompt.value = '';
+                //This is where you can show the error messages to the user (can you make it so it displays on the actual website instead of an alert)
                 alert(msgs || 'Registration error'); //AAYYANN DO THISSSSS
                 console.log('Registration errors from server:', data.errors);
                 return;

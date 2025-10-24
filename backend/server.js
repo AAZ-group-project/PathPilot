@@ -5,6 +5,9 @@ const path = require('path'); // Add this to handle file paths
 const fs = require('fs');     // Add this to handle file operations
 const cors = require('cors');
 const bcrypt = require('bcrypt');
+const session = require('express-session');
+const flash = require('express-flash');
+const { request } = require('http');
 
 const PORT = process.env.PORT || 4000;
 
@@ -12,9 +15,17 @@ app.use(cors());
 // parse JSON and urlencoded bodies
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
+app.use(session({
+    secret: 'secret', //Change this later as this is not secure as this is used as the encryption key for the user session
+    resave: false,
+    saveUninitialized: false
+}));
+app.use(flash());
 
 // serve front-end files (project root)
 app.use(express.static(path.join(__dirname, '..')));
+
+
 
 // single POST for registration
 app.post("/register", async (req, res) => {
@@ -51,12 +62,28 @@ app.post("/register", async (req, res) => {
                 if (err) {
                     throw err;
                 }
-
+        
                 console.log(results.rows);
 
                 if (results.rows.length > 0) {
                     errors.push({ msg: 'Email already registered' });
                     return res.status(400).json({ errors });
+                } else {
+                    // Insert new user
+                    pool.query(
+                        `INSERT INTO users (firstname, surname, email, password)
+                        VALUES ($1, $2, $3, $4)
+                        RETURNING id, password`,
+                        [fname, sname, email, hashedPassword],
+                        (err, results) => {
+                            if (err) {
+                                throw err;
+                            }
+                            console.log(results.rows);
+                            req.flash('success_msg', 'You are now registered. Please log in.');
+                            res.redirect('/signin');
+                        }
+                    )
                 }
             }
         )
