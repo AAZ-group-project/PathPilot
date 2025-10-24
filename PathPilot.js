@@ -4,6 +4,18 @@ const logo = document.getElementsByClassName("logo")[0];
 
 mainPage();
 
+async function getCoordinates(place) {
+    const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&countrycodes=gb&limit=1&q=${encodeURIComponent(place)}`;
+    const response = await fetch(url);
+    const data = await response.json();
+    if (!data.length) {
+        return null;
+    }
+    return {
+        lat: data[0].lat, lon: data[0].lon, display_name: data[0].display_name
+    };
+}
+
 function mainPage(){
     main.innerHTML = '';
     const form = document.createElement("form");
@@ -34,16 +46,27 @@ function mainPage(){
     destinationInput.placeholder = "Enter destination...";
     destinationInput.required = true;
 
-    const submitMainButton = document.createElement("a");
+    const submitMainButton = document.createElement("button");
     submitMainButton.innerText = "Submit";
     submitMainButton.className = "submit";
-    submitMainButton.href = "#";
+    submitMainButton.type = "submit";
 
-    formGroup.appendChild(locationLabel);
-    formGroup.appendChild(locationInput);
-    formGroup.appendChild(destinationLabel);
-    formGroup.appendChild(destinationInput);
-    formGroup.appendChild(submitMainButton);
+    form.addEventListener("submit", async(e) => {
+        e.preventDefault();
+        const location = locationInput.value;
+        const destination = destinationInput.value;
+        const locationCoords = await getCoordinates(location);
+        const destinationCoords = await getCoordinates(destination);
+        if (!locationCoords || !destinationCoords) {
+            alert("One of the locations could not be found.");
+            return;
+        }
+        alert(
+            `Location: ${locationCoords.display_name}\nLat: ${locationCoords.lat}, Lon: ${locationCoords.lon}\n\nDestination: ${destinationCoords.display_name}\nLat: ${destinationCoords.lat}, Lon: ${destinationCoords.lon}`
+        );
+    });
+
+    formGroup.append(locationLabel, locationInput, destinationLabel, destinationInput, submitMainButton);
     form.appendChild(formGroup);
     main.appendChild(form);
 }
