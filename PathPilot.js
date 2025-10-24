@@ -3,6 +3,7 @@ const signIn = document.getElementsByClassName("signin")[0];
 const logo = document.getElementsByClassName("logo")[0];
 const register = document.getElementsByClassName("register")[0];
 const section = document.getElementById('section');
+const panel = document.getElementById('panel');
 const map2 = document.getElementById('map');
 const dashboardBtn = document.getElementsByClassName("dashboard")[0]; // or use getElementById if you have an id
 let map = null;
@@ -10,7 +11,7 @@ let layerGroup = null;
 
 mainPage();
 
-async function getCoordinates(place) {
+async function getCoordinates(place){
     const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&countrycodes=gb&limit=1&q=${encodeURIComponent(place)}`;
     const response = await fetch(url);
     const data = await response.json();
@@ -22,19 +23,18 @@ async function getCoordinates(place) {
     };
 }
 
-function resetMap() {
-  if (map) { map.remove(); map = null; }
-  map2.style.display = 'none';
+function resetMap(){
+    if (map){
+        map.remove();
+        map = null;
+    }
+    map2.style.display = 'none';
 }
 
 function mainPage(){
-    main.innerHTML = '';
+    panel.innerHTML = '';
     resetMap();
-
-    const panel = document.createElement('div');
-    panel.id = "panel";
-    main.appendChild(panel);
-
+    
     const form = document.createElement("form");
     form.className = "entries";
 
