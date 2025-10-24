@@ -3,8 +3,8 @@ const signIn = document.getElementsByClassName("signin")[0];
 const logo = document.getElementsByClassName("logo")[0];
 const register = document.getElementsByClassName("register")[0];
 const section = document.getElementById('section');
-const panel = document.getElementById('panel');
 const map2 = document.getElementById('map');
+const dashboardBtn = document.getElementsByClassName("dashboard")[0]; // or use getElementById if you have an id
 let map = null;
 let layerGroup = null;
 
@@ -28,8 +28,13 @@ function resetMap() {
 }
 
 function mainPage(){
-    panel.innerHTML = '';
+    main.innerHTML = '';
     resetMap();
+
+    const panel = document.createElement('div');
+    panel.id = "panel";
+    main.appendChild(panel);
+
     const form = document.createElement("form");
     form.className = "entries";
 
@@ -181,7 +186,7 @@ function Register() {
 }
 
 function Dashboard(){
-    mainPage()
+    mainPage();
 }
 register.addEventListener("click", function(e) {
     e.preventDefault();
@@ -193,13 +198,8 @@ signIn.addEventListener("click", (e) => {
     signInMenu();
 });
 
-logo.addEventListener("click", (e) => {
+dashboardBtn.addEventListener("click", (e) => {
     e.preventDefault();
     mainPage();
 });
 
-const dashboardBtn = document.getElementsByClassName("dashboard")[0]; // or use getElementById if you have an id
-dashboardBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-    Dashboard();
-});
