@@ -12,15 +12,24 @@
     font-style: normal;
 }
 
+#section {
+    display: flex;
+    justify-content: flex-end;
+    align-items: flex-start;
+    height: calc(100vh - 80px);
+    margin-top: 30px;
+    margin-bottom: 30px;
+}
+
 .entries{
     display: flex;
     flex-direction: column;
     gap: 15px;
     width: 300px;
-    margin: 0 auto;
-    margin-top: 20px;
+
     background-color: #050a1c;
-    border-radius: 10px;
+    border-radius: 10px 0 0 10px;
+    height: 70%;
     padding: 20px;
 }
 
@@ -41,6 +50,7 @@
 }
 
 body{
+    margin: 0;
     background-color: #02030a;
     font-family: sans-serif;
     color: #ffffff;
@@ -150,6 +160,9 @@ html, body {
 }
 
 .prompt-label {
+    font-size: 25px;
+    color: #008b8b;
+    font-family: 'PathPilotFont', sans-serif;
     margin-bottom: 10px;
     display: block;
 }
