@@ -84,8 +84,6 @@ signIn.addEventListener("click", (e) => {
     e.preventDefault();
     signInMenu();
 });
-
-logo.addEventListener("click", (e) => {
 // register function //
 function Register() {
     main.innerHTML = '';
@@ -141,4 +139,9 @@ register.addEventListener("click", function(e) {
     e.preventDefault();
     mainPage();
     Register();         
+});
+
+logo.addEventListener("click", (e) => {
+    e.preventDefault();
+    mainPage();
 });
