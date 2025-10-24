@@ -89,6 +89,10 @@ html, body {
     display: inline-block;
     letter-spacing: 1.5px;
     font-weight: bold;
+    transition: all 0.1s ease;
+}
+.logo:hover {
+    color: white;
 }
 
 /* Styling for sign in */
@@ -182,4 +186,25 @@ html, body {
     font-family: 'PathPilotFont', sans-serif;
     margin-bottom: 10px;
     display: block;
+}
+
+.nav-links {
+    display: flex;
+    align-items: center;
+    gap: 30px;
+    position: relative;
+}
+.nav-links a {
+    position: relative;
+}
+.nav-links a + a::before {
+    content: "|";
+    position: absolute;
+    left: -18px;
+    top: 50%;
+    transform: translateY(-50%);
+    color: #008b8b;
+    font-size: 1.6rem;
+    font-weight: bold;
+    pointer-events: none;
 }
