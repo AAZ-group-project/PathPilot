@@ -84,6 +84,7 @@ signIn.addEventListener("click", (e) => {
     e.preventDefault();
     signInMenu();
 });
+<<<<<<< HEAD
 // register function //
 function Register() {
     main.innerHTML = '';
@@ -145,3 +146,6 @@ logo.addEventListener("click", (e) => {
     e.preventDefault();
     mainPage();
 });
+=======
+
+>>>>>>> database
