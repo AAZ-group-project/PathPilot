@@ -266,7 +266,7 @@ function Register() {
 register.addEventListener("click", function(e) {
     e.preventDefault();
     panel.appendChild(signBox);
-}
+});
 
 
 register.addEventListener("click", function(e) {
@@ -286,4 +286,3 @@ dashboardBtn.addEventListener("click", (e) => {
     section.classList.remove("auth-mode");
     mainPage();
 });
-
