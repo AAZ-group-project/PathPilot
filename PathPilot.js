@@ -22,6 +22,19 @@ async function getCoordinates(place){
     };
 }
 
+function showPopup(message) {
+    const popup = document.getElementById("popup");
+    const popupMessage = document.getElementById("popup-message");
+    popupMessage.textContent = message;
+    popup.classList.remove("hidden");
+}
+
+function hidePopup() {
+    const popup = document.getElementById("popup");
+    popup.classList.add("hidden");
+}
+
+
 function mainPage(){
     map2.style.display = 'block';
     panel.innerHTML = '';
@@ -64,7 +77,7 @@ function mainPage(){
         const startCoords = await getCoordinates(locationInput.value);
         const endCoords = await getCoordinates(destinationInput.value);
         if (!startCoords || !endCoords){
-            alert('One of the locations could not be found.');
+            showPopup(msgs || 'One of the locations could not be found.');
             return;
         }
         const mapContainer = document.getElementById('map');
@@ -187,21 +200,16 @@ function Register() {
             });
             const data = await resp.json();
 
-
             if (!resp.ok) {
-                const msgs = (data.errors || []).map(e => e.msg).join('\n');
-                // clear inputs after failure to register
-                fnamePrompt.value = '';
-                snamePrompt.value = '';
-                emailPrompt.value = '';
+                const msgs = (data.errors || []).map(e => `• ${e.msg}`).join('\n');
+                // clear password inputs after failure to register
                 passwordPrompt.value = '';
                 confirmPasswordPrompt.value = '';
                 //This is where you can show the error messages to the user (can you make it so it displays on the actual website instead of an alert)
-                alert(msgs || 'Registration error'); //AAYYANN DO THISSSSS
+                showPopup(msgs || 'Registration error');
                 console.log('Registration errors from server:', data.errors);
                 return;
             }
-
             // clears input fields upon successful registration
             fnamePrompt.value = '';
             snamePrompt.value = '';
@@ -209,10 +217,10 @@ function Register() {
             passwordPrompt.value = '';
             confirmPasswordPrompt.value = '';
             console.log('Server response:', data);
-            alert('Registration sent');
+            showPopup('Registration Sent!')
         } catch (err) {
             console.error('Registration failed', err);
-            alert('Registration failed');
+            showPopup('Registration Failed!')
         }
     });
 
@@ -243,4 +251,8 @@ dashboardBtn.addEventListener("click", (e) => {
     e.preventDefault();
     main.classList.remove("auth-mode");
     mainPage();
+});
+
+document.addEventListener("DOMContentLoaded", () => {
+    document.getElementById("popup-close").addEventListener("click", hidePopup);
 });

@@ -250,3 +250,47 @@ html, body {
     font-weight: bold;
     pointer-events: none;
 }
+
+.popup{
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+}
+.hidden {
+    display: none;
+}
+.popup-content {
+    background: #050a1c;
+    color: white;
+    padding: 20px;
+    border-radius: 10px;
+    text-align: center;
+    border: 2px solid #008b8b;
+    width: 300px;
+    font-family: 'PathPilotFont', sans-serif;
+}
+.popup-content button {
+    margin-top: 10px;
+    background: transparent;
+    color: white;
+    border: 1.5px solid #008b8b;
+    padding: 8px 20px;
+    border-radius: 30px;
+    cursor: pointer;
+}
+.popup-content button:hover {
+    background: #008b8b;
+    color: black;
+}
+#popup-message {
+    white-space: pre-line;
+    margin-bottom: 15px;
+    line-height: 1.5;
+}
