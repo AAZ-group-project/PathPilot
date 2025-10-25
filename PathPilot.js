@@ -46,6 +46,7 @@ function mainPage(){
     `;
     panel.appendChild(form);
 
+
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const startValue = document.getElementById("start").value;
@@ -89,16 +90,6 @@ function signInMenu(){
 
     const signBox = document.createElement('div');
     signBox.setAttribute('class','box');
-
-    // show server flash message if present
-    if (window.flashMessage) {
-        const flashDiv = document.createElement('div');
-        flashDiv.className = 'flash-message';
-        flashDiv.innerText = window.flashMessage;
-        // optional: remove global so it doesn't persist if user navigates around
-        window.flashMessage = '';
-        signBox.appendChild(flashDiv);
-    }
 
     const emailPrompt = document.createElement('input');
     emailPrompt.type = "email";
