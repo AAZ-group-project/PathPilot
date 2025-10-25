@@ -1,25 +1,13 @@
 const main = document.getElementById("section");
+const panel = document.getElementById('panel');
+const map2 = document.getElementById('map');
+
 const signIn = document.getElementsByClassName("signin")[0];
-const logo = document.getElementsByClassName("logo")[0];
 const register = document.getElementsByClassName("register")[0];
+const dashboardButton = document.querySelector(".dashboard");
 
-mainPage();
-
-async function getCoordinates(place) {
-    const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&countrycodes=gb&limit=1&q=${encodeURIComponent(place)}`;
-    const response = await fetch(url);
-    const data = await response.json();
-    if (!data.length) {
-        const section = document.getElementById('section');
-        const panel = document.getElementById('panel');
-        const map2 = document.getElementById('map');
-        const dashboardBtn = document.getElementsByClassName("dashboard")[0]; // or use getElementById if you have an id
-        let map = null;
-        let layerGroup = null;
-    }
-}
-
-mainPage();
+let map = null;
+let layerGroup = null;
 
 async function getCoordinates(place){
     const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&countrycodes=gb&limit=1&q=${encodeURIComponent(place)}`;
@@ -33,92 +21,61 @@ async function getCoordinates(place){
     };
 }
 
-
+function resetMap() {
+    if (map){
+        map.remove();
+        map = null;
+    }
+    map2.style.display = 'none';
+}
 
 function mainPage(){
-    map2.style.display = 'block';
-    panel.innerHTML = '';
+    main.classList.remove("auth-mode");
+    panel.innerHTML = ""; 
+    resetMap();
+    map2.style.display = "block";
 
     const form = document.createElement("form");
     form.className = "entries";
-
-    const formGroup = document.createElement("div");
-    formGroup.className = "form-group";
-
-    const locationLabel = document.createElement("label");
-    locationLabel.innerText = "Location:";
-    locationLabel.className = "prompt-label";
-
-    const locationInput = document.createElement("input");
-    locationInput.type = "search";
-    locationInput.className = "input-field";
-    locationInput.name = "location";
-    locationInput.placeholder = "Enter location...";
-    locationInput.required = true;
-
-    const destinationLabel = document.createElement("label");
-    destinationLabel.innerText = "Destination:";
-    destinationLabel.className = "prompt-label";
-
-    const destinationInput = document.createElement("input");
-    destinationInput.type = "search";
-    destinationInput.className = "input-field";
-    destinationInput.name = "destination";
-    destinationInput.placeholder = "Enter destination...";
-    destinationInput.required = true;
-
-    const submitMainButton = document.createElement("button");
-    submitMainButton.innerText = "Submit";
-    submitMainButton.className = "submit";
-    submitMainButton.type = "submit";
-
-    form.addEventListener("submit", async(e) => {
-        e.preventDefault();
-        const location = locationInput.value;
-        const destination = destinationInput.value;
-        const locationCoords = await getCoordinates(location);
-        const destinationCoords = await getCoordinates(destination);
-        if (!locationCoords || !destinationCoords) {
-            alert("One of the locations could not be found.");
-            return;
-        }
-        alert(
-            `Location: ${locationCoords.display_name}\nLat: ${locationCoords.lat}, Lon: ${locationCoords.lon}\n\nDestination: ${destinationCoords.display_name}\nLat: ${destinationCoords.lat}, Lon: ${destinationCoords.lon}`
-        );
-    });
+    form.innerHTML=`
+        <label class="prompt-label">Location:</label>
+        <input type="text" class="input-field" id="start">
+        <label class="prompt-label">Destination:</label>
+        <input type="text" class="input-field" id="end">
+        <button class="submit">Show Route</button>
+    `;
+    panel.appendChild(form);
 
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const startCoords = await getCoordinates(locationInput.value);
-        const endCoords = await getCoordinates(destinationInput.value);
+        const startValue = document.getElementById("start").value;
+        const endValue = document.getElementById("end").value;
+
+        const startCoords = await getCoordinates(startValue);
+        const endCoords = await getCoordinates(endValue);
+
         if (!startCoords || !endCoords){
             alert('One of the locations could not be found.');
             return;
         }
-        const mapContainer = document.getElementById('map');
-        mapContainer.style.display = 'block';
+
+        map2.style.display = "block";
         if (!map) {
-            map = L.map('map');
+            map = L.map('map').setView([54.8, -4.6], 5);
             L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
                 maxZoom: 19,
                 attribution: '© OpenStreetMap contributors'
             }).addTo(map);
             layerGroup = L.layerGroup().addTo(map);
         }
-        setTimeout(() => map.invalidateSize(), 0);
+        setTimeout(() => map.invalidateSize(), 200);
         layerGroup.clearLayers();
-        const m1 = L.marker([startCoords.lat, startCoords.lon]).bindPopup(`Start: ${startCoords.display_name}`).openPopup();
-        const m2 = L.marker([endCoords.lat, endCoords.lon]).bindPopup(`Destination: ${endCoords.display_name}`).openPopup();
-        layerGroup.addLayer(m1).addLayer(m2);
-        const bounds = L.latLngBounds(
-            [startCoords.lat, startCoords.lon],
-            [endCoords.lat, endCoords.lon]
-        );
-        map.fitBounds(bounds, {padding: [30, 30]});
+
+        L.marker([startCoords.lat, startCoords.lon]).addTo(layerGroup).bindPopup(`Start: ${startCoords.display_name}`).openPopup();
+        L.marker([endCoords.lat, endCoords.lon]).addTo(layerGroup).bindPopup(`Destination: ${endCoords.display_name}`);
+
+        map.fitBounds([[startCoords.lat, startCoords.lon], [endCoords.lat, endCoords.lon]], { padding: [50, 50] });
     });
-    formGroup.append(locationLabel, locationInput, destinationLabel, destinationInput, submitMainButton);
-    form.appendChild(formGroup);
-    panel.appendChild(form);
 }
 
 // UI for sign in menu
@@ -166,9 +123,9 @@ function signInMenu(){
 
 // register function //
 function Register() {
-    main.innerHTML = '';
     panel.innerHTML = '';
     map2.style.display = 'none';
+    main.classList.add("auth-mode");
 
     const heading = document.createElement('h2');
     heading.innerText = "Register";
@@ -262,30 +219,25 @@ function Register() {
     signBox.appendChild(confirmPasswordPrompt);
     signBox.appendChild(submitButton);
 
-    main.appendChild(signBox);
+    panel.appendChild(signBox);
 }
 
-register.addEventListener("click", function(e) {
+dashboardButton.addEventListener("click", function(e) {
     e.preventDefault();
-    panel.appendChild(signBox);
+    main.classList.remove("auth-mode");
+    mainPage();
 });
 
-
 register.addEventListener("click", function(e) {
     e.preventDefault();
-    section.classList.add("auth-mode");
+    main.classList.add("auth-mode");
     Register();
 });
 
 signIn.addEventListener("click", (e) => {
     e.preventDefault();
-    section.classList.add("auth-mode");
+    main.classList.add("auth-mode");
     signInMenu();
 });
 
-dashboardBtn.addEventListener("click", (e) => {
-    e.preventDefault();
-    section.classList.remove("auth-mode");
-    mainPage();
-});
-
+mainPage();
