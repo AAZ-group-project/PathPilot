@@ -10,7 +10,13 @@ const bcrypt = require('bcrypt');
 const session = require('express-session');
 const flash = require('express-flash');
 const { request } = require('http');
+const passport = require('passport');
 
+
+
+const initializePassport = require('./passportConfig');
+
+initializePassport(passport);
 const PORT = process.env.PORT || 4000;
 
 app.use(cors());
@@ -22,6 +28,10 @@ app.use(session({
     resave: false,
     saveUninitialized: false
 }));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use(flash());
 
 // serve front-end files (project root)
@@ -95,6 +105,12 @@ app.post("/register", async (req, res) => {
     console.log('Received registration:', { fname, sname, email });
     return res.json({ status: 'received' });
 });
+
+app.post('/signin', passport.authenticate('local', {
+    successRedirect: '/dashboard',
+    failureRedirect: '/signin',
+    failureFlash: true
+}));
 
 app.listen(PORT, () => {
     console.log(`Server is running on port ${PORT}`);
