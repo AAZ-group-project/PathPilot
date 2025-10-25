@@ -10,7 +10,13 @@ const bcrypt = require('bcrypt');
 const session = require('express-session');
 const flash = require('express-flash');
 const { request } = require('http');
+const passport = require('passport');
 
+
+
+const initializePassport = require('./passportConfig');
+
+initializePassport(passport);
 const PORT = process.env.PORT || 4000;
 
 app.use(cors());
@@ -22,78 +28,118 @@ app.use(session({
     resave: false,
     saveUninitialized: false
 }));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
 app.use(flash());
+// allow browser to send/receive session cookie
+app.use(cors({ origin: true, credentials: true }));
 
 // serve front-end files (project root)
 app.use(express.static(path.join(__dirname, '..')));
 
 
+// add GET /signin that injects any flash message into the HTML
+app.get('/signin', (req, res) => {
+    const messages = req.flash('success_msg') || [];
+    const msg = messages.length ? messages[0] : '';
+    const filePath = path.join(__dirname, '..', 'PathPilot.html');
+
+    fs.readFile(filePath, 'utf8', (err, html) => {
+        if (err) {
+            console.error('Failed to read PathPilot.html', err);
+            return res.status(500).send('Server error');
+        }
+        const injected = html.replace(
+            '<script src="PathPilot.js"></script>',
+            `<script>window.flashMessage = ${JSON.stringify(msg)};</script>\n<script src="PathPilot.js"></script>`
+        );
+        res.send(injected);
+    });
+});
 
 // single POST for registration
 app.post("/register", async (req, res) => {
     const { fname, sname, email, password, confirmPassword } = req.body || {};
     let errors = [];
-    //Error handling and validation
+
     if (!fname || !sname || !email || !password || !confirmPassword) {
         errors.push({ msg: 'Please fill in all fields' });
     }
-
     if ((password || '').length < 6 || (confirmPassword || '').length < 6) {
         errors.push({ msg: 'Password should be at least 6 characters' });
     }
-
     if (password !== confirmPassword) {
         errors.push({ msg: 'Passwords do not match' });
     }
-
     if (errors.length > 0) {
         console.log('Registration errors:', errors);
         return res.status(400).json({ errors });
-    } else{
-        // Form validation succeeded
-
-        let hashedPassword = await bcrypt.hash(password, 10);
-        console.log(hashedPassword);
-
-        // Check if email already exists
-        pool.query(
-            `SELECT * FROM users 
-            WHERE email = $1`,
-            [email],
-            (err, results) => {
-                if (err) {
-                    throw err;
-                }
-        
-                console.log(results.rows);
-
-                if (results.rows.length > 0) {
-                    errors.push({ msg: 'Email already registered' });
-                    return res.status(400).json({ errors });
-                } else {
-                    // Insert new user
-                    pool.query(
-                        `INSERT INTO users (firstname, surname, email, password)
-                        VALUES ($1, $2, $3, $4)
-                        RETURNING id, password`,
-                        [fname, sname, email, hashedPassword],
-                        (err, results) => {
-                            if (err) {
-                                throw err;
-                            }
-                            console.log(results.rows);
-                            req.flash('success_msg', 'You are now registered. Please log in.');
-                            // res.redirect('/signin'); this will crash the server as there is no front-end route handling yet
-                        }
-                    )
-                }
-            }
-        )
     }
 
-    // valid — log registration and respond
-    console.log('Received registration:', { fname, sname, email });
-    return res.json({ status: 'received' });
+    try {
+        const hashedPassword = await bcrypt.hash(password, 10);
+        // check existing email
+        const selectRes = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+        if (selectRes.rows.length > 0) {
+            return res.status(400).json({ errors: [{ msg: 'Email already registered' }] });
+        }
+        // insert user
+        const insertRes = await pool.query(
+            `INSERT INTO users (firstname, surname, email, password)
+             VALUES ($1, $2, $3, $4)
+             RETURNING id`,
+            [fname, sname, email, hashedPassword]
+        );
+
+        console.log('Inserted user:', insertRes.rows[0]);
+        req.flash('success_msg', 'You are now registered. Please log in.');
+        // tell client to navigate to signin (client-side will perform navigation)
+        return res.json({ success: true, redirect: '/signin' });
+
+    } catch (err) {
+        console.error('Database error:', err);
+        return res.status(500).json({ error: 'Database error' });
+    }
+});
+
+function ensureAuthenticated(req, res, next) {
+    if (req.isAuthenticated && req.isAuthenticated()) return next();
+    return res.status(401).json({ error: 'Not authenticated' });
+}
+
+app.post('/signin', (req, res, next) => {
+    passport.authenticate('local', (err, user, info) => {
+        if (err) {
+            console.error('Auth error:', err);
+            return res.status(500).json({ error: 'Authentication error' });
+        }
+        if (!user) {
+            // info.message usually contains failure reason
+            return res.status(400).json({ errors: [{ msg: info?.message || 'Invalid credentials' }] });
+        }
+        req.logIn(user, (loginErr) => {
+            if (loginErr) {
+                console.error('Login error:', loginErr);
+                return res.status(500).json({ error: 'Login failed' });
+            }
+            // authenticated and session established
+            return res.json({ success: true, redirect: '/dashboard' });
+        });
+    })(req, res, next);
+});
+
+// optional: protected route that serves the app (dashboard)
+app.get('/dashboard', ensureAuthenticated, (req, res) => {
+    const filePath = path.join(__dirname, '..', 'PathPilot.html');
+    fs.readFile(filePath, 'utf8', (err, html) => {
+        if (err) {
+            console.error('Failed to read PathPilot.html', err);
+            return res.status(500).send('Server error');
+        }
+        res.send(html);
+    });
 });
 
 app.listen(PORT, () => {
