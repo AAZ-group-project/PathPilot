@@ -22,24 +22,6 @@
     margin-bottom: 30px;
 }
 
-.entries{
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-    width: 300px;
-
-    background-color: #050a1c;
-    border-radius: 10px 0 0 10px;
-    height: 70%;
-    display: flex;
-    justify-content: flex-end;
-    align-items: flex-start;
-    height: calc(100vh - 80px);
-    padding: 0px;
-    margin-top: 20px;
-    gap: 0px;
-}
-
 .auth-mode {
     justify-content: center !important;
 }

@@ -2,7 +2,6 @@ const main = document.getElementById("section");
 const signIn = document.getElementsByClassName("signin")[0];
 const logo = document.getElementsByClassName("logo")[0];
 const register = document.getElementsByClassName("register")[0];
-const section = document.getElementById('section');
 const panel = document.getElementById('panel');
 const map2 = document.getElementById('map');
 const dashboardBtn = document.getElementsByClassName("dashboard")[0]; // or use getElementById if you have an id
@@ -22,8 +21,6 @@ async function getCoordinates(place){
         lat: data[0].lat, lon: data[0].lon, display_name: data[0].display_name
     };
 }
-
-
 
 function mainPage(){
     map2.style.display = 'block';
@@ -131,7 +128,7 @@ function signInMenu(){
 
 // register function //
 function Register() {
-    main.innerHTML = '';
+    main.classList.add("auth-mode");
     panel.innerHTML = '';
     map2.style.display = 'none';
 
@@ -227,32 +224,23 @@ function Register() {
     signBox.appendChild(confirmPasswordPrompt);
     signBox.appendChild(submitButton);
 
-    main.appendChild(signBox);
+    panel.appendChild(signBox);
 }
 
 register.addEventListener("click", function(e) {
     e.preventDefault();
-<<<<<<< HEAD
-=======
-    panel.appendChild(signBox);
-});
-
-
-register.addEventListener("click", function(e) {
-    e.preventDefault();
->>>>>>> connect-register-to-database
-    section.classList.add("auth-mode");
+    main.classList.add("auth-mode");
     Register();
 });
 
 signIn.addEventListener("click", (e) => {
     e.preventDefault();
-    section.classList.add("auth-mode");
+    main.classList.add("auth-mode");
     signInMenu();
 });
 
 dashboardBtn.addEventListener("click", (e) => {
     e.preventDefault();
-    section.classList.remove("auth-mode");
+    main.classList.remove("auth-mode");
     mainPage();
 });
