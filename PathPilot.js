@@ -232,6 +232,15 @@ function Register() {
 
 register.addEventListener("click", function(e) {
     e.preventDefault();
+<<<<<<< HEAD
+=======
+    panel.appendChild(signBox);
+});
+
+
+register.addEventListener("click", function(e) {
+    e.preventDefault();
+>>>>>>> connect-register-to-database
     section.classList.add("auth-mode");
     Register();
 });
