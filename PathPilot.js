@@ -2,22 +2,12 @@ const main = document.getElementById("section");
 const signIn = document.getElementsByClassName("signin")[0];
 const logo = document.getElementsByClassName("logo")[0];
 const register = document.getElementsByClassName("register")[0];
-
-mainPage();
-
-async function getCoordinates(place) {
-    const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&countrycodes=gb&limit=1&q=${encodeURIComponent(place)}`;
-    const response = await fetch(url);
-    const data = await response.json();
-    if (!data.length) {
-        const section = document.getElementById('section');
-        const panel = document.getElementById('panel');
-        const map2 = document.getElementById('map');
-        const dashboardBtn = document.getElementsByClassName("dashboard")[0]; // or use getElementById if you have an id
-        let map = null;
-        let layerGroup = null;
-    }
-}
+const section = document.getElementById('section');
+const panel = document.getElementById('panel');
+const map2 = document.getElementById('map');
+const dashboardBtn = document.getElementsByClassName("dashboard")[0]; // or use getElementById if you have an id
+let map = null;
+let layerGroup = null;
 
 mainPage();
 
@@ -72,21 +62,6 @@ function mainPage(){
     submitMainButton.className = "submit";
     submitMainButton.type = "submit";
 
-    form.addEventListener("submit", async(e) => {
-        e.preventDefault();
-        const location = locationInput.value;
-        const destination = destinationInput.value;
-        const locationCoords = await getCoordinates(location);
-        const destinationCoords = await getCoordinates(destination);
-        if (!locationCoords || !destinationCoords) {
-            alert("One of the locations could not be found.");
-            return;
-        }
-        alert(
-            `Location: ${locationCoords.display_name}\nLat: ${locationCoords.lat}, Lon: ${locationCoords.lon}\n\nDestination: ${destinationCoords.display_name}\nLat: ${destinationCoords.lat}, Lon: ${destinationCoords.lon}`
-        );
-    });
-
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
         const startCoords = await getCoordinates(locationInput.value);
@@ -132,16 +107,6 @@ function signInMenu(){
 
     const signBox = document.createElement('div');
     signBox.setAttribute('class','box');
-
-    // show server flash message if present
-    if (window.flashMessage) {
-        const flashDiv = document.createElement('div');
-        flashDiv.className = 'flash-message';
-        flashDiv.innerText = window.flashMessage;
-        // optional: remove global so it doesn't persist if user navigates around
-        window.flashMessage = '';
-        signBox.appendChild(flashDiv);
-    }
 
     const emailPrompt = document.createElement('input');
     emailPrompt.type = "email";
@@ -267,12 +232,15 @@ function Register() {
 
 register.addEventListener("click", function(e) {
     e.preventDefault();
+<<<<<<< HEAD
+=======
     panel.appendChild(signBox);
 });
 
 
 register.addEventListener("click", function(e) {
     e.preventDefault();
+>>>>>>> connect-register-to-database
     section.classList.add("auth-mode");
     Register();
 });
@@ -288,4 +256,3 @@ dashboardBtn.addEventListener("click", (e) => {
     section.classList.remove("auth-mode");
     mainPage();
 });
-
