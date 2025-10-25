@@ -118,6 +118,16 @@ function signInMenu(){
     const signBox = document.createElement('div');
     signBox.setAttribute('class','box');
 
+        // show server flash message if present
+    if (window.flashMessage) {
+        const flashDiv = document.createElement('div');
+        flashDiv.className = 'flash-message';
+        flashDiv.innerText = window.flashMessage;
+        // clear global so it doesn't persist on navigation
+        window.flashMessage = '';
+        signBox.appendChild(flashDiv);
+    }
+
     const emailPrompt = document.createElement('input');
     emailPrompt.type = "email";
     emailPrompt.placeholder = "Enter your email...";
@@ -131,6 +141,42 @@ function signInMenu(){
     const submitButton = document.createElement('button');
     submitButton.innerText = "Sign In";
     submitButton.className = "submit";
+
+    // sign-in handler
+    submitButton.addEventListener('click', async () => {
+        const payload = {
+            email: emailPrompt.value,
+            password: passwordPrompt.value
+        };
+
+        try {
+            const resp = await fetch('/signin', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+                credentials: 'include' // important: send/receive session cookie
+            });
+            const data = await resp.json();
+
+            if (!resp.ok) {
+                const msgs = (data.errors || []).map(e => `• ${e.msg}`).join('\n') || data.error || 'Sign in failed';
+                passwordPrompt.value = '';
+                showPopup(msgs);
+                return;
+            }
+
+            // successful sign-in: redirect to dashboard
+            if (data.redirect) {
+                window.location.href = data.redirect;
+            } else {
+                // fallback: reload root
+                window.location.href = '/';
+            }
+        } catch (err) {
+            console.error('Sign in failed', err);
+            showPopup('Sign in failed');
+        }
+    });
 
     signBox.appendChild(heading);
     signBox.appendChild(emailPrompt);
@@ -217,7 +263,7 @@ function Register() {
             passwordPrompt.value = '';
             confirmPasswordPrompt.value = '';
             console.log('Server response:', data);
-            showPopup('Registration Sent!')
+            if (data.redirect) window.location.href = data.redirect; //redirects to the signin page (its meant to do that but for some reason it gets redirected to the dashboard page)
         } catch (err) {
             console.error('Registration failed', err);
             showPopup('Registration Failed!')
