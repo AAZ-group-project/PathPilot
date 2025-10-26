@@ -9,20 +9,24 @@ const bcrypt = require('bcrypt');
 const session = require('express-session');
 const flash = require('express-flash');
 const passport = require('passport');
-
-
 const app = express();
 const initializePassport = require('./passportConfig');
-
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
+const FRONTEND = process.env.FRONTEND_URL || 'https://pathpilotaaz.netlify.app/';
 
 initializePassport(passport);
 const PORT = process.env.PORT || 4000;
 
+if (process.env.NODE_ENV === 'production') {
+    app.set('trust proxy', 1);
+}
+
 app.use(cors({
-   origin: process.env.FRONTEND_ORIGIN || 'http://localhost:8888',
-   credentials: true
- }));
+  origin: FRONTEND,
+  credentials: true,
+  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type','Authorization']
+}));
  
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
@@ -47,8 +51,6 @@ app.use(passport.initialize());
 app.use(passport.session());
 
 app.use(flash());
-// allow browser to send/receive session cookie
-app.use(cors({ origin: true, credentials: true }));
 
 // serve front-end files (project root)
 app.use(express.static(path.join(__dirname, '..')));
