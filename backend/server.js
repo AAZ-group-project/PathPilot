@@ -14,7 +14,7 @@ const passport = require('passport');
 const app = express();
 const initializePassport = require('./passportConfig');
 
-const supabase = createClient(process.env.SUPABASE_DATABASE_URL, process.env.SUPABASE_ANON_KEY);
+const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 
 initializePassport(passport);
 const PORT = process.env.PORT || 4000;
