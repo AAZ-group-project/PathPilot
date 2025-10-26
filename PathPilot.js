@@ -5,7 +5,7 @@ const register = document.getElementsByClassName("register")[0];
 const panel = document.getElementById('panel');
 const map2 = document.getElementById('map');
 const dashboardBtn = document.getElementsByClassName("dashboard")[0]; // or use getElementById if you have an id
-const BACKEND = window.BACKEND_URL || (typeof process !== 'undefined' && process.env?.BACKEND_URL) || 'http://localhost:4000';
+const BACKEND = (window.BACKEND_URL || 'https://pathpilot-v4gh.onrender.com').replace(/\/+$/, '');
 let map = null;
 let layerGroup = null;
 
@@ -55,18 +55,28 @@ async function submitSignIn({ email, password }) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password })
         });
-        const data = await resp.json();
-
+        
+        const ct = resp.headers.get('content-type') || '';
         if (!resp.ok) {
-            const msgs = (data.errors || []).map(e => `• ${e.msg}`).join('\n') || data.error || 'Sign in failed';
-            return null
+            if (ct.includes('application/json')) {
+                const errJson = await resp.json();
+                throw new Error((errJson.errors && errJson.errors.map(e => e.msg).join('\n')) || errJson.error || 'Sign in failed');
+            } else {
+                const text = await resp.text();
+                console.error('Non-JSON error response from server:', text);
+                throw new Error('Sign in failed (server error)');
+            }
         }
-        window.location.href = data.redirect || '/';
-        return data;
+
+        const data = ct.includes('application/json') ? await resp.json() : null;
+        if (data && data.redirect) {
+            window.location.href = data.redirect;
+        } else {
+            window.location.href = '/dashboard';
+        }
     } catch (err) {
         console.error('Sign in request failed', err);
-        showPopup('Sign in failed');
-        throw null;
+        showPopup(err.message || 'Sign in failed');
     }
 }
 

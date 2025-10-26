@@ -12,7 +12,7 @@ const passport = require('passport');
 const app = express();
 const initializePassport = require('./passportConfig');
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
-const FRONTEND = process.env.FRONTEND_URL || 'https://pathpilotaaz.netlify.app/';
+const FRONTEND = (process.env.FRONTEND_URL || 'https://pathpilotaaz.netlify.app').replace(/\/+$/, '');
 
 initializePassport(passport);
 const PORT = process.env.PORT || 4000;
@@ -22,7 +22,14 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 app.use(cors({
-  origin: FRONTEND,
+  origin: function(origin, callback) {
+    if (!origin) return callback(null, true);
+    const incoming = origin.replace(/\/+$/, '');
+    if (incoming === FRONTEND) {
+      return callback(null, true);
+    }
+    return callback(new Error('CORS policy violation: Origin not allowed'));
+  },
   credentials: true,
   methods: ['GET','POST','PUT','DELETE','OPTIONS'],
   allowedHeaders: ['Content-Type','Authorization']
