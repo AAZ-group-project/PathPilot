@@ -42,7 +42,7 @@ async function submitRegister(paylad) {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify(payload)
+        body: JSON.stringify({ email, fname, sname, password, confirmPassword })
     });
     return resp; // caller checks resp.ok and reads resp.json()
 }
@@ -55,7 +55,7 @@ async function submitSignIn({ email, password }) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password })
         });
-        
+
         const ct = resp.headers.get('content-type') || '';
         if (!resp.ok) {
             if (ct.includes('application/json')) {
