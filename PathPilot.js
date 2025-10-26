@@ -37,12 +37,12 @@ function hidePopup() {
     popup.classList.add("hidden");
 }
 
-async function submitRegister(paylad) {
+async function submitRegister(payload) {
     const resp = await fetch(`${BACKEND}/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
-        body: JSON.stringify({ email, fname, sname, password, confirmPassword })
+        body: JSON.stringify(payload)
     });
     return resp; // caller checks resp.ok and reads resp.json()
 }
@@ -55,7 +55,7 @@ async function submitSignIn({ email, password }) {
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ email, password })
         });
-
+        
         const ct = resp.headers.get('content-type') || '';
         if (!resp.ok) {
             if (ct.includes('application/json')) {
