@@ -21,10 +21,22 @@ if (process.env.NODE_ENV === 'production') {
     app.set('trust proxy', 1);
 }
 
-app.use(cors({
-  origin: process.env.FRONTEND_URL || '*',
-  credentials: true
-}));
+const corsOptions = ({
+  origin: function(origin, callback) {
+    if (!origin) return callback(null, true);
+    const incoming = origin.replace(/\/+$/, '');
+    if (incoming === FRONTEND) {
+      return callback(null, true);
+    }
+    return callback(new Error('CORS policy violation: Origin not allowed'));
+  },
+  credentials: true,
+  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
+  allowedHeaders: ['Content-Type','Authorization']
+});
+ 
+app.options(/.*/, require('cors')(corsOptions)); // for preflight requests
+app.use(require('cors')(corsOptions));
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
