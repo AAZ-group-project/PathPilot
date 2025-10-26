@@ -54,11 +54,11 @@ app.use(express.static(path.join(__dirname, '..')));
 app.get('/signin', (req, res) => {
     const messages = req.flash('success_msg') || [];
     const msg = messages.length ? messages[0] : '';
-    const filePath = path.join(__dirname, '..', 'PathPilot.html');
+    const filePath = path.join(__dirname, '..', 'index.html');
 
     fs.readFile(filePath, 'utf8', (err, html) => {
         if (err) {
-            console.error('Failed to read PathPilot.html', err);
+            console.error('Failed to read index.html', err);
             return res.status(500).send('Server error');
         }
         const injected = html.replace(
@@ -156,10 +156,10 @@ app.post('/signin', (req, res, next) => {
 
 // optional: protected route that serves the app (dashboard)
 app.get('/dashboard', ensureAuthenticated, (req, res) => {
-    const filePath = path.join(__dirname, '..', 'PathPilot.html');
+    const filePath = path.join(__dirname, '..', 'index.html');
     fs.readFile(filePath, 'utf8', (err, html) => {
         if (err) {
-            console.error('Failed to read PathPilot.html', err);
+            console.error('Failed to read index.html', err);
             return res.status(500).send('Server error');
         }
         res.send(html);
