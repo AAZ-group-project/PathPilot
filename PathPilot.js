@@ -5,10 +5,12 @@ const register = document.getElementsByClassName("register")[0];
 const panel = document.getElementById('panel');
 const map2 = document.getElementById('map');
 const dashboardBtn = document.getElementsByClassName("dashboard")[0]; // or use getElementById if you have an id
+const BACKEND = window.BACKEND_URL || (typeof process !== 'undefined' && process.env?.BACKEND_URL) || 'http://localhost:4000';
 let map = null;
 let layerGroup = null;
 
 mainPage();
+
 
 async function getCoordinates(place){
     const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&countrycodes=gb&limit=1&q=${encodeURIComponent(place)}`;
@@ -34,6 +36,25 @@ function hidePopup() {
     popup.classList.add("hidden");
 }
 
+async function submitRegister(payload) {
+    const resp = await fetch(`${BACKEND}/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include',
+        body: JSON.stringify(payload)
+    });
+    return resp; // caller checks resp.ok and reads resp.json()
+}
+
+async function submitSignIn(payload) {
+    const resp = await fetch(`${BACKEND}/signin`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        credentials: 'include', // important to receive session cookie
+        body: JSON.stringify(payload)
+    });
+    return resp;
+}
 
 function mainPage(){
     map2.style.display = 'block';
@@ -150,12 +171,7 @@ function signInMenu(){
         };
 
         try {
-            const resp = await fetch('/signin', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload),
-                credentials: 'include' // important: send/receive session cookie
-            });
+            const resp = await submitSignIn(payload);
             const data = await resp.json();
 
             if (!resp.ok) {
@@ -239,11 +255,7 @@ function Register() {
         };
 
         try {
-            const resp = await fetch('http://localhost:4000/register', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(payload)
-            });
+            const resp = await submitRegister(payload);
             const data = await resp.json();
 
             if (!resp.ok) {
@@ -263,7 +275,7 @@ function Register() {
             passwordPrompt.value = '';
             confirmPasswordPrompt.value = '';
             console.log('Server response:', data);
-            if (data.redirect) window.location.href = data.redirect; //redirects to the signin page (its meant to do that but for some reason it gets redirected to the dashboard page)
+            if (data.redirect) window.location.href = 'signin'; //redirects to the signin page (its meant to do that but for some reason it gets redirected to the dashboard page)
         } catch (err) {
             console.error('Registration failed', err);
             showPopup('Registration Failed!')
