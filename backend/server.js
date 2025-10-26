@@ -19,7 +19,11 @@ const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY
 initializePassport(passport);
 const PORT = process.env.PORT || 4000;
 
-app.use(cors());
+app.use(cors({
+   origin: process.env.FRONTEND_ORIGIN || 'http://localhost:8888',
+   credentials: true
+ }));
+ 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
@@ -33,8 +37,8 @@ app.use(session({
     saveUninitialized: false,
     cookie: {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production', 
-        sameSite: 'lax', 
+        secure: process.env.NODE_ENV === 'production',
+        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
         maxAge: 1000 * 60 * 60 * 24 * 7 
     }
 }));
