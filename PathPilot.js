@@ -11,12 +11,7 @@ let layerGroup = null;
 
 mainPage();
 
-fetch(`${BACKEND}/signin`, {
-  method: 'POST',
-  credentials: 'include',
-  headers: { 'Content-Type': 'application/json' },
-  body: JSON.stringify({ email, password })
-});
+
 
 async function getCoordinates(place){
     const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&countrycodes=gb&limit=1&q=${encodeURIComponent(place)}`;
@@ -42,7 +37,7 @@ function hidePopup() {
     popup.classList.add("hidden");
 }
 
-async function submitRegister(payload) {
+async function submitRegister(paylad) {
     const resp = await fetch(`${BACKEND}/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
@@ -52,14 +47,27 @@ async function submitRegister(payload) {
     return resp; // caller checks resp.ok and reads resp.json()
 }
 
-async function submitSignIn(payload) {
-    const resp = await fetch(`${BACKEND}/signin`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include', // important to receive session cookie
-        body: JSON.stringify(payload)
-    });
-    return resp;
+async function submitSignIn({ email, password }) {
+    try{
+        const resp = await fetch(`${BACKEND}/signin`, {
+            method: 'POST',
+            credentials: 'include', // important to receive session cookie
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ email, password })
+        });
+        const data = await resp.json();
+
+        if (!resp.ok) {
+            const msgs = (data.errors || []).map(e => `• ${e.msg}`).join('\n') || data.error || 'Sign in failed';
+            return null
+        }
+        window.location.href = data.redirect || '/';
+        return data;
+    } catch (err) {
+        console.error('Sign in request failed', err);
+        showPopup('Sign in failed');
+        throw null;
+    }
 }
 
 function mainPage(){
