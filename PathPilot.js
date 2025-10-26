@@ -11,6 +11,12 @@ let layerGroup = null;
 
 mainPage();
 
+fetch(`${BACKEND}/signin`, {
+  method: 'POST',
+  credentials: 'include',
+  headers: { 'Content-Type': 'application/json' },
+  body: JSON.stringify({ email, password })
+});
 
 async function getCoordinates(place){
     const url = `https://nominatim.openstreetmap.org/search?format=json&addressdetails=1&countrycodes=gb&limit=1&q=${encodeURIComponent(place)}`;
