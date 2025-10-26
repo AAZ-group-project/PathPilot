@@ -38,14 +38,40 @@ function hidePopup() {
 }
 
 async function submitRegister(payload) {
-    const resp = await fetch(`${BACKEND}/register`, {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        credentials: 'include',
-        body: JSON.stringify(payload)
-    });
-    return resp; // caller checks resp.ok and reads resp.json()
+    try {
+        const resp = await fetch(`${BACKEND}/register`, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include',
+            body: JSON.stringify(payload)
+        });
+        const ct = resp.headers.get('content-type') || '';
+        if (!resp.ok) {
+            if (ct.includes('application/json')) {
+                const errJson = await resp.json();
+                const msg = (errJson.errors || [{ msg: errJson.error }]).map(e => e.msg).join('\n');
+                throw new Error(msg || 'Registration failed');
+            } else {
+                const text = await resp.text();
+                console.error('Non-JSON error response from server:', text);
+                throw new Error('Registration failed (server error)');
+            }
+        }
+
+        // success
+        if (ct.includes('application/json')) {
+            const data = await resp.json();
+            if (data.redirect) window.location.href = data.redirect;
+            else window.location.href = '/signin';
+        } else {
+            window.location.href = '/signin';
+        }
+    } catch (err) {
+        console.error('Registration request failed', err);
+        showPopup(err.message || 'Registration failed');
+    }
 }
+
 
 async function submitSignIn({ email, password }) {
     try{
