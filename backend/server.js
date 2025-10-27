@@ -16,24 +16,17 @@ const passport = require('passport');
 
 const initializePassport = require('./passportConfig');
 
-const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
-
 initializePassport(passport);
 const PORT = process.env.PORT || 4000;
 
 app.use(cors());
+// parse JSON and urlencoded bodies
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(session({
     secret: 'secret', //Change this later as this is not secure as this is used as the encryption key for the user session
     resave: false,
-    saveUninitialized: false,
-    cookie: {
-        httpOnly: true,
-        secure: process.env.NODE_ENV === 'production', 
-        sameSite: 'lax', 
-        maxAge: 1000 * 60 * 60 * 24 * 7 
-    }
+    saveUninitialized: false
 }));
 
 app.use(passport.initialize());
@@ -49,11 +42,11 @@ app.use(express.static(path.join(__dirname, '..')));
 app.get('/signin', (req, res) => {
     const messages = req.flash('success_msg') || [];
     const msg = messages.length ? messages[0] : '';
-    const filePath = path.join(__dirname, '..', 'index.html');
+    const filePath = path.join(__dirname, '..', 'PathPilot.html');
 
     fs.readFile(filePath, 'utf8', (err, html) => {
         if (err) {
-            console.error('Failed to read index.html', err);
+            console.error('Failed to read PathPilot.html', err);
             return res.status(500).send('Server error');
         }
         const injected = html.replace(
@@ -137,10 +130,10 @@ app.post('/signin', (req, res, next) => {
 
 // optional: protected route that serves the app (dashboard)
 app.get('/dashboard', ensureAuthenticated, (req, res) => {
-    const filePath = path.join(__dirname, '..', 'index.html');
+    const filePath = path.join(__dirname, '..', 'PathPilot.html');
     fs.readFile(filePath, 'utf8', (err, html) => {
         if (err) {
-            console.error('Failed to read index.html', err);
+            console.error('Failed to read PathPilot.html', err);
             return res.status(500).send('Server error');
         }
         res.send(html);
