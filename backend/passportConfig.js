@@ -1,8 +1,6 @@
 const localStrategy = require('passport-local').Strategy;
-const { createClient } = require('@supabase/supabase-js')
+const { createClient } = require('@supabase/supabase-js');
 const bcrypt = require('bcrypt');
-const e = require('express');
-const passport = require('passport');
 
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
 

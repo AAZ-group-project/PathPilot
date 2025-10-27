@@ -1,18 +1,20 @@
 require('dotenv').config();
 const express = require('express');
-const { createClient } = require('@supabase/supabase-js') //Supabase client
-const bodyParser = require('body-parser');
-const path = require('path'); //Handle file paths
-const fs = require('fs');     //Handle file operations
+const app = express();
+const { createClient } = require('@supabase/supabase-js');
+const path = require('path'); // Add this to handle file paths
+const fs = require('fs');     // Add this to handle file operations
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const session = require('express-session');
 const flash = require('express-flash');
 const passport = require('passport');
-const app = express();
+
+
+
 const initializePassport = require('./passportConfig');
+
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
-const FRONTEND = (process.env.FRONTEND_URL || 'https://pathpilotaaz.netlify.app').replace(/\/+$/, '');
 
 initializePassport(passport);
 const PORT = process.env.PORT || 4000;
@@ -21,42 +23,21 @@ if (process.env.NODE_ENV === 'production') {
     app.set('trust proxy', 1);
 }
 
-const corsOptions = ({
-  origin: function(origin, callback) {
-    if (!origin) return callback(null, true);
-    const incoming = origin.replace(/\/+$/, '');
-    if (incoming === FRONTEND) {
-      return callback(null, true);
-    }
-    return callback(new Error('CORS policy violation: Origin not allowed'));
-  },
-  credentials: true,
-  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
-  allowedHeaders: ['Content-Type','Authorization']
-});
- 
-app.options(/.*/, require('cors')(corsOptions)); // for preflight requests
-app.use(require('cors')(corsOptions));
-
+app.use(cors());
+// parse JSON and urlencoded bodies
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
-if (process.env.NODE_ENV === 'production') {
-    app.set('trust proxy', 1);
-}
-
 app.use(session({
-    secret: process.env.SESSION_SECRET,
+    secret: process.env.SESSION_SECRET || 'dev-secret-change-me',
     resave: false,
     saveUninitialized: false,
     cookie: {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
-        maxAge: 1000 * 60 * 60 * 24 * 7 
+        secure: process.env.NODE_ENV === 'production', // only over HTTPS in prod
+        sameSite: 'lax', // adjust as needed
+        maxAge: 1000 * 60 * 60 * 24 * 7 // 7 days
     }
 }));
-
 app.use(passport.initialize());
 app.use(passport.session());
 
@@ -70,11 +51,11 @@ app.use(express.static(path.join(__dirname, '..')));
 app.get('/signin', (req, res) => {
     const messages = req.flash('success_msg') || [];
     const msg = messages.length ? messages[0] : '';
-    const filePath = path.join(__dirname, '..', 'index.html');
+    const filePath = path.join(__dirname, '..', 'PathPilot.html');
 
     fs.readFile(filePath, 'utf8', (err, html) => {
         if (err) {
-            console.error('Failed to read index.html', err);
+            console.error('Failed to read PathPilot.html', err);
             return res.status(500).send('Server error');
         }
         const injected = html.replace(
@@ -106,6 +87,7 @@ app.post("/register", async (req, res) => {
 
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
+        // check existing email
         // check existing email via Supabase
         const { data: existing, error: selErr } = await supabase
             .from('users')
@@ -172,10 +154,10 @@ app.post('/signin', (req, res, next) => {
 
 // optional: protected route that serves the app (dashboard)
 app.get('/dashboard', ensureAuthenticated, (req, res) => {
-    const filePath = path.join(__dirname, '..', 'index.html');
+    const filePath = path.join(__dirname, '..', 'PathPilot.html');
     fs.readFile(filePath, 'utf8', (err, html) => {
         if (err) {
-            console.error('Failed to read index.html', err);
+            console.error('Failed to read PathPilot.html', err);
             return res.status(500).send('Server error');
         }
         res.send(html);
