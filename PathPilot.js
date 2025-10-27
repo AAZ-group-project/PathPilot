@@ -5,11 +5,10 @@ const register = document.getElementsByClassName("register")[0];
 const panel = document.getElementById('panel');
 const map2 = document.getElementById('map');
 const dashboardBtn = document.getElementsByClassName("dashboard")[0]; // or use getElementById if you have an id
-const BACKEND = (window.BACKEND_URL || 'https://pathpilot-v4gh.onrender.com').replace(/\/+$/, '');
 let map = null;
 let layerGroup = null;
 
-mainPage();
+Register();
 
 
 
@@ -39,7 +38,7 @@ function hidePopup() {
 
 async function submitRegister(payload) {
     try {
-        const resp = await fetch(`${BACKEND}/register`, {
+        const resp = await fetch(`/register`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             credentials: 'include',
@@ -75,7 +74,7 @@ async function submitRegister(payload) {
 
 async function submitSignIn({ email, password }) {
     try{
-        const resp = await fetch(`${BACKEND}/signin`, {
+        const resp = await fetch(`/signin`, {
             method: 'POST',
             credentials: 'include', // important to receive session cookie
             headers: { 'Content-Type': 'application/json' },
