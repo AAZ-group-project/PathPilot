@@ -1,58 +1,37 @@
 require('dotenv').config();
+
 const express = require('express');
-const { createClient } = require('@supabase/supabase-js') //Supabase client
-const bodyParser = require('body-parser');
-const path = require('path'); //Handle file paths
-const fs = require('fs');     //Handle file operations
+const app = express();
+const { pool } = require("./dbConfig");
+const path = require('path'); // Add this to handle file paths
+const fs = require('fs');     // Add this to handle file operations
 const cors = require('cors');
 const bcrypt = require('bcrypt');
 const session = require('express-session');
 const flash = require('express-flash');
+const { request } = require('http');
 const passport = require('passport');
-const app = express();
+
+
+
 const initializePassport = require('./passportConfig');
+
 const supabase = createClient(process.env.SUPABASE_URL, process.env.SUPABASE_KEY);
-const FRONTEND = (process.env.FRONTEND_URL || 'https://pathpilotaaz.netlify.app').replace(/\/+$/, '');
 
 initializePassport(passport);
 const PORT = process.env.PORT || 4000;
 
-if (process.env.NODE_ENV === 'production') {
-    app.set('trust proxy', 1);
-}
-
-const corsOptions = ({
-  origin: function(origin, callback) {
-    if (!origin) return callback(null, true);
-    const incoming = origin.replace(/\/+$/, '');
-    if (incoming === FRONTEND) {
-      return callback(null, true);
-    }
-    return callback(new Error('CORS policy violation: Origin not allowed'));
-  },
-  credentials: true,
-  methods: ['GET','POST','PUT','DELETE','OPTIONS'],
-  allowedHeaders: ['Content-Type','Authorization']
-});
- 
-app.options(/.*/, require('cors')(corsOptions)); // for preflight requests
-app.use(require('cors')(corsOptions));
-
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-
-if (process.env.NODE_ENV === 'production') {
-    app.set('trust proxy', 1);
-}
-
 app.use(session({
-    secret: process.env.SESSION_SECRET,
+    secret: 'secret', //Change this later as this is not secure as this is used as the encryption key for the user session
     resave: false,
     saveUninitialized: false,
     cookie: {
         httpOnly: true,
-        secure: process.env.NODE_ENV === 'production',
-        sameSite: process.env.NODE_ENV === 'production' ? 'none' : 'lax',
+        secure: process.env.NODE_ENV === 'production', 
+        sameSite: 'lax', 
         maxAge: 1000 * 60 * 60 * 24 * 7 
     }
 }));
@@ -106,41 +85,27 @@ app.post("/register", async (req, res) => {
 
     try {
         const hashedPassword = await bcrypt.hash(password, 10);
-        // check existing email via Supabase
-        const { data: existing, error: selErr } = await supabase
-            .from('users')
-            .select('*')
-            .eq('email', email)
-            .limit(1);
-
-        if (selErr) {
-            console.error('Supabase select error:', selErr);
-            return res.status(500).json({ error: 'Database error' });
-        }
-
-        if (existing && existing.length > 0) {
+        // check existing email
+        const selectRes = await pool.query('SELECT * FROM users WHERE email = $1', [email]);
+        if (selectRes.rows.length > 0) {
             return res.status(400).json({ errors: [{ msg: 'Email already registered' }] });
         }
+        // insert user
+        const insertRes = await pool.query(
+            `INSERT INTO users (firstname, surname, email, password)
+             VALUES ($1, $2, $3, $4)
+             RETURNING id`,
+            [fname, sname, email, hashedPassword]
+        );
 
-        // insert user via Supabase
-        const { data: inserted, error: insErr } = await supabase
-            .from('users')
-            .insert([{ firstname: fname, surname: sname, email, password: hashedPassword }])
-            .select('id')
-            .single();
-
-        if (insErr) {
-            console.error('Supabase insert error:', insErr);
-            return res.status(500).json({ error: 'Database error' });
-        }
-
-        console.log('Inserted user:', inserted);
+        console.log('Inserted user:', insertRes.rows[0]);
         req.flash('success_msg', 'You are now registered. Please log in.');
+        // tell client to navigate to signin (client-side will perform navigation)
         return res.json({ success: true, redirect: '/signin' });
 
     } catch (err) {
-        console.error('Server error:', err);
-        return res.status(500).json({ error: 'Server error' });
+        console.error('Database error:', err);
+        return res.status(500).json({ error: 'Database error' });
     }
 });
 
