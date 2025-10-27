@@ -21,7 +21,7 @@ if (process.env.NODE_ENV === 'production') {
     app.set('trust proxy', 1);
 }
 
-const corsOptions = ({
+app.use(cors({
   origin: function(origin, callback) {
     if (!origin) return callback(null, true);
     const incoming = origin.replace(/\/+$/, '');
@@ -33,10 +33,8 @@ const corsOptions = ({
   credentials: true,
   methods: ['GET','POST','PUT','DELETE','OPTIONS'],
   allowedHeaders: ['Content-Type','Authorization']
-});
- 
-app.options(/.*/, require('cors')(corsOptions)); // for preflight requests
-app.use(require('cors')(corsOptions));
+}));
+
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
