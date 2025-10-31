@@ -116,62 +116,117 @@ function mainPage(){
     formGroup.className = "form-group";
 
     const locationLabel = document.createElement("label");
-    locationLabel.innerText = "Location:";
+    locationLabel.innerText = "First Location:";
     locationLabel.className = "prompt-label";
 
     const locationInput = document.createElement("input");
     locationInput.type = "search";
     locationInput.className = "input-field";
     locationInput.name = "location";
-    locationInput.placeholder = "Enter location...";
+    locationInput.placeholder = "Enter start location...";
     locationInput.required = true;
 
     const destinationLabel = document.createElement("label");
-    destinationLabel.innerText = "Destination:";
+    destinationLabel.innerText = "Final Destination:";
     destinationLabel.className = "prompt-label";
 
     const destinationInput = document.createElement("input");
     destinationInput.type = "search";
     destinationInput.className = "input-field";
     destinationInput.name = "destination";
-    destinationInput.placeholder = "Enter destination...";
+    destinationInput.placeholder = "Enter final destination...";
     destinationInput.required = true;
+
+    const locationListLabel = document.createElement("label");
+    locationListLabel.innerText = "All Locations:";
+    locationListLabel.className = "prompt-label";
+
+    const locationListInput = document.createElement("textarea");
+    locationListInput.className ="input-field";
+    locationListInput.name = "locations";
+    locationListInput.placeholder = "Example:\nLondon\nManchester\nLiverpool";
+    locationListInput.rows = 10;
+    locationListInput.required = true;
 
     const submitMainButton = document.createElement("button");
     submitMainButton.innerText = "Submit";
     submitMainButton.className = "submit";
     submitMainButton.type = "submit";
 
+    const clearButton = document.createElement("button");
+    clearButton.innerText = "Clear Map";
+    clearButton.className = "submit";
+    clearButton.type = "button";
+    clearButton.addEventListener("click", () => {
+        if (layerGroup) layerGroup.clearLayers();
+    });
+
     form.addEventListener('submit', async (e) => {
         e.preventDefault();
-        const startCoords = await getCoordinates(locationInput.value);
-        const endCoords = await getCoordinates(destinationInput.value);
-        if (!startCoords || !endCoords){
-            showPopup(msgs || 'One of the locations could not be found.');
+
+        const places = [
+            locationInput.value.trim(),
+            ...locationListInput.value.split("\n")
+                .map(p => p.trim())
+                .filter(p => p.length > 0),
+            destinationInput.value.trim()
+        ].filter(p => p.length > 0);
+
+        if (places.length < 1){
+            showPopup("Enter at least 1 location")
             return;
         }
-        const mapContainer = document.getElementById('map');
-        mapContainer.style.display = 'block';
-        if (!map) {
-            map = L.map('map');
-            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-                maxZoom: 19,
-                attribution: '© OpenStreetMap contributors'
-            }).addTo(map);
-            layerGroup = L.layerGroup().addTo(map);
+
+    const coordsList = [];
+    for (const place of places) {
+        const coords = await getCoordinates(place);
+        if (coords) coordsList.push(coords);
+        else console.warn(`Could not find: ${place}`);
+        await new Promise(resolve => setTimeout(resolve, 1000)); // API rate limit
+    }
+
+    const mapContainer = document.getElementById('map');
+    mapContainer.style.display = 'block';
+
+    if (!map) {
+        map = L.map('map');
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+            maxZoom: 19,
+            attribution: '© OpenStreetMap contributors'
+        }).addTo(map);
+        layerGroup = L.layerGroup().addTo(map);
+    }
+
+    if (window.routingControl) {
+        map.removeControl(window.routingControl);
+    }
+
+    window.routingControl = L.Routing.control({
+        waypoints: coordsList.map(c => L.latLng(c.lat, c.lon)),
+        lineOptions: {
+            styles: [{ color: 'blue', opacity: 0.6, weight: 4 }]
+        },
+        routeWhileDragging: false,
+        createMarker: function(i, wp){
+            return L.marker(wp.latLng).bindPopup(`${i + 1}. ${coordsList[i].display_name}`);
         }
-        setTimeout(() => map.invalidateSize(), 0);
-        layerGroup.clearLayers();
-        const m1 = L.marker([startCoords.lat, startCoords.lon]).bindPopup(`Start: ${startCoords.display_name}`).openPopup();
-        const m2 = L.marker([endCoords.lat, endCoords.lon]).bindPopup(`Destination: ${endCoords.display_name}`).openPopup();
-        layerGroup.addLayer(m1).addLayer(m2);
-        const bounds = L.latLngBounds(
-            [startCoords.lat, startCoords.lon],
-            [endCoords.lat, endCoords.lon]
-        );
-        map.fitBounds(bounds, {padding: [30, 30]});
+    }).addTo(map);
+
+    setTimeout(() => map.invalidateSize(), 0);
+    layerGroup.clearLayers();
+
+    coordsList.forEach((c, i) => {
+        L.marker([c.lat, c.lon])
+          .bindPopup(`${i + 1}. ${c.display_name}`)
+          .addTo(layerGroup);
     });
-    formGroup.append(locationLabel, locationInput, destinationLabel, destinationInput, submitMainButton);
+    
+
+
+    // Fit map bounds
+    map.fitBounds(routeLine.getBounds(), { padding: [30, 30] });
+});
+    formGroup.append(locationLabel, locationInput, locationListLabel, locationListInput ,destinationLabel, destinationInput,submitMainButton, clearButton);
     form.appendChild(formGroup);
     panel.appendChild(form);
 }

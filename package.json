@@ -1,0 +1,30 @@
+{
+  "name": "pathpilot",
+  "version": "1.0.0",
+  "description": "PathPilot would provide a platform for analysing delivery locations, calculating the most efficient routes, and minimising travel time and distance. By incorporating geographic data and dynamic routing strategies, PathPilot helps delivery teams reduce fuel costs, improve delivery times, and manage multiple delivery vehicles more effectively. Ideal for logistics operations and courier services. It will also provides a scalable foundation for real-time route adjustments, traffic-aware navigation, and priority-based scheduling in future iterations.",
+  "main": "PathPilot.js",
+  "dependencies": {
+    "tr46": "^0.0.3",
+    "tslib": "^2.8.1",
+    "undici-types": "^7.16.0",
+    "webidl-conversions": "^3.0.1",
+    "whatwg-url": "^5.0.0",
+    "ws": "^8.18.3"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/AAZ-group-project/PathPilot.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/AAZ-group-project/PathPilot/issues"
+  },
+  "homepage": "https://github.com/AAZ-group-project/PathPilot#readme"
+}
