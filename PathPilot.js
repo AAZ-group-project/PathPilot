@@ -158,7 +158,21 @@ function mainPage(){
     clearButton.className = "submit";
     clearButton.type = "button";
     clearButton.addEventListener("click", () => {
-        if (layerGroup) layerGroup.clearLayers();
+        if (window.routingControl) {
+            try {
+                map.removeControl(window.routingControl);
+            } catch (err) {
+                console.warn("Routing control could not be removed:", err);
+                showPopup(`Map error: ${err.message || "Couldn't remove route"}`);
+            }
+            window.routingControl = null;
+        }
+        if (layerGroup) {
+            layerGroup.clearLayers();
+        }
+        locationInput.value = '';
+        destinationInput.value = '';
+        locationListInput.value = '';
     });
 
     form.addEventListener('submit', async (e) => {
@@ -203,7 +217,7 @@ function mainPage(){
         try {
             // Builds a query string of all coordinates (lon,lat pairs)
             const query = coordsList.map(c => `${c.lon},${c.lat}`).join(';');
-            // Constructs the OSRM Trip API URL with start and end fixed, roundtrip disabled
+            // Constructs the OSRM Trip API URL with start and end fixed
             const tripUrl = `https://router.project-osrm.org/trip/v1/driving/${query}?source=first&destination=last&roundtrip=false`;
             // Send a request to OSRM Trip API
             const tripResp = await fetch(tripUrl);
