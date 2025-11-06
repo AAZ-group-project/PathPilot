@@ -176,56 +176,80 @@ function mainPage(){
             showPopup("Enter at least 1 location")
             return;
         }
-
-    const coordsList = [];
-    for (const place of places) {
-        const coords = await getCoordinates(place);
-        if (coords) coordsList.push(coords);
-        else console.warn(`Could not find: ${place}`);
-        await new Promise(resolve => setTimeout(resolve, 1000)); // API rate limit
-    }
-
-    const mapContainer = document.getElementById('map');
-    mapContainer.style.display = 'block';
-
-    if (!map) {
-        map = L.map('map');
-        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
-            maxZoom: 19,
-            attribution: '© OpenStreetMap contributors'
-        }).addTo(map);
-        layerGroup = L.layerGroup().addTo(map);
-    }
-
-    if (window.routingControl) {
-        map.removeControl(window.routingControl);
-    }
-
-    window.routingControl = L.Routing.control({
-        waypoints: coordsList.map(c => L.latLng(c.lat, c.lon)),
-        lineOptions: {
-            styles: [{ color: 'blue', opacity: 0.6, weight: 4 }]
-        },
-        routeWhileDragging: false,
-        createMarker: function(i, wp){
-            return L.marker(wp.latLng).bindPopup(`${i + 1}. ${coordsList[i].display_name}`);
+        const coordsList = [];
+        for (const place of places) {
+            const coords = await getCoordinates(place);
+            if (coords) coordsList.push(coords);
+            else console.warn(`Could not find: ${place}`);
+            await new Promise(resolve => setTimeout(resolve, 1000)); // API rate limit
         }
-    }).addTo(map);
 
-    setTimeout(() => map.invalidateSize(), 0);
-    layerGroup.clearLayers();
+        const mapContainer = document.getElementById('map');
+        mapContainer.style.display = 'block';
 
-    coordsList.forEach((c, i) => {
-        L.marker([c.lat, c.lon])
-          .bindPopup(`${i + 1}. ${c.display_name}`)
-          .addTo(layerGroup);
+        if (!map) {
+            map = L.map('map');
+            L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png',{
+                maxZoom: 19,
+                attribution: '© OpenStreetMap contributors'
+            }).addTo(map);
+            layerGroup = L.layerGroup().addTo(map);
+        }
+
+        if (window.routingControl) {
+            map.removeControl(window.routingControl);
+        }
+
+        try {
+            // Builds a query string of all coordinates (lon,lat pairs)
+            const query = coordsList.map(c => `${c.lon},${c.lat}`).join(';');
+            // Constructs the OSRM Trip API URL with start and end fixed, roundtrip disabled
+            const tripUrl = `https://router.project-osrm.org/trip/v1/driving/${query}?source=first&destination=last&roundtrip=false`;
+            // Send a request to OSRM Trip API
+            const tripResp = await fetch(tripUrl);
+            const tripData = await tripResp.json();
+            // If OSRM returns a valid optimized trip
+            if (tripData.code === 'Ok' && tripData.trips && tripData.trips.length > 0) {
+                // Sort waypoints based on optimized order (waypoint_index)
+                const reordered = tripData.waypoints
+                    .sort((a, b) => a.waypoint_index - b.waypoint_index)
+                    // Convert each waypoint to {lat, lon, display_name} format
+                    .map(wp => ({
+                        lat: wp.location[1],
+                        lon: wp.location[0],
+                        display_name: wp.name || ''
+                    }));
+                coordsList.length = 0;
+                coordsList.push(...reordered);
+            } else {
+                console.warn('Trip optimization failed, using entered order:', tripData);
+            }
+        } catch (err) {
+            console.error('Trip optimization error:', err);
+        }
+
+        window.routingControl = L.Routing.control({
+            waypoints: coordsList.map(c => L.latLng(c.lat, c.lon)),
+            lineOptions: {
+                styles: [{ color: 'blue', opacity: 0.6, weight: 4 }]
+            },
+            routeWhileDragging: false,
+            createMarker: function(i, wp){
+                return L.marker(wp.latLng).bindPopup(`${i + 1}. ${coordsList[i].display_name}`);
+            }
+        }).addTo(map);
+
+        setTimeout(() => map.invalidateSize(), 0);
+        layerGroup.clearLayers();
+
+        coordsList.forEach((c, i) => {
+            L.marker([c.lat, c.lon])
+            .bindPopup(`${i + 1}. ${c.display_name}`)
+            .addTo(layerGroup);
+        });
+        // Fit map bounds
+        map.fitBounds(layerGroup.getBounds(), { padding: [30, 30] });
     });
-    
-
-
-    // Fit map bounds
-    map.fitBounds(routeLine.getBounds(), { padding: [30, 30] });
-});
     formGroup.append(locationLabel, locationInput, locationListLabel, locationListInput ,destinationLabel, destinationInput,submitMainButton, clearButton);
     form.appendChild(formGroup);
     panel.appendChild(form);
