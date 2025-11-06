@@ -22,3 +22,15 @@ PathPilot would provide a platform for analysing delivery locations, calculating
     - Use OpenStreetMap API
 2. Priority Orders
     - Route high-priority stops first
+
+## Final Showcase
+### Dashboard
+![Dashboard](images/dashboard-screenshot.png)
+
+### Route Optimisation Dashboard
+*Dashboard with user inputs showing optimized route generation and ETA panel.*
+![Map](images/map-screenshot.png)
+
+### Sign In and Register Pages
+![Sign In](images/sign-in-screenshot.png)
+![Register](images/register-screenshot.png)
